@@ -7,19 +7,25 @@ class UploadController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+
+	public function upload()
 	{
-		//
+
+        return View::make('upload.upload-form');
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
+
+	public function process()
 	{
-		//
+
+
+        if (Input::hasFile('userfile'))
+        {
+            $file = Input::file('userfile');
+            var_dump($file);
+        }
+        $msg = 'empty';
+        return View::make('upload.upload-form', array('message' => $msg));
 	}
 
 	/**
