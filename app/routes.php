@@ -1,23 +1,11 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the Closure to execute when that URI is requested.
-|
-*/
-
-Route::get('/', function()
-{
-	return View::make('upload.upload-form');
-});
-
-Route::get('/upload', array('uses' => 'UploadController@upload'));
-Route::post('/upload', array('uses' => 'UploadController@process'));
+/**
+ * Uploading photo
+ */
+Route::any('/upload/{album_id}', array(
+    'before' => 'auth',
+    'uses' => 'UploadController@upload'));
 
 /**
  * Users authentification routes
@@ -31,4 +19,24 @@ Route::get('/user/logout', array('uses' => 'UsersController@logout'));
 Route::get('/user/register', array('uses' => 'UsersController@registration'));
 Route::post('/user/register', array('uses' => 'UsersController@register'));
 
-Route::get('/user/profile', array('uses' => 'UsersController@profile'));
+Route::get('/user/reset_password', array('uses' => 'UsersController@reset_password'));
+Route::post('/user/reset_password', array('uses' => 'UsersController@reset_password'));
+
+Route::get('/user/change_password/{reset_code}', array('uses' => 'UsersController@change_password'));
+Route::post('/user/change_password/{reset_code}', array('uses' => 'UsersController@change_password'));
+
+Route::get('/user/profile', array(
+    'before' => 'auth',
+    'uses' => 'UsersController@profile'));
+
+/**
+ * Gallery albums routes
+ */
+Route::get('gallery', array('uses' => 'AlbumsController@index'));
+
+Route::get('album/{id}', array('uses' => 'AlbumsController@show'));
+
+Route::any('gallery/new-album', array(
+    'before' => 'auth',
+    'uses' => 'AlbumsController@create'
+));

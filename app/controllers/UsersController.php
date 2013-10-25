@@ -1,12 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Redirect;
+
 class UsersController extends \BaseController {
 
-	public function login()
+    /**
+     * Showing user login
+     * @return mixed
+     */
+
+    public function login()
 	{
         return View::make('users.login-form');
 	}
 
+    /**
+     * User logout
+     * @return mixed
+     */
     public function logout()
     {
         // Logs the user out
@@ -15,7 +26,11 @@ class UsersController extends \BaseController {
         return Redirect::to('user/login');
     }
 
-	public function auhenticate()
+    /**
+     * User checking login
+     * @return mixed
+     */
+    public function auhenticate()
 	{
         $email = Input::get('email');
         $password = Input::get('password');
@@ -35,35 +50,42 @@ class UsersController extends \BaseController {
         }
         catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
         {
-            $msg = 'Login field is required.';
+            $msg = trans('users.login_field');
         }
         catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
         {
-            $msg = 'Password field is required.';
+            $msg = trans('users.login_field');
         }
         catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
         {
-            $msg = 'Wrong password, try again.';
+            $msg = trans('users.wrong_password');
         }
         catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
         {
-            $msg = 'User was not found.';
+            $msg = trans('users.wrong_user');
         }
         catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
         {
-            $msg = 'User is not activated.';
+            $msg = trans('users.user_not_activated');
         }
 
         return View::make('users.login-form', array('email' => $email, 'message' => $msg));
 	}
 
-
-	public function registration()
+    /**
+     * Showing registration form
+     * @return mixed
+     */
+    public function registration()
 	{
         return View::make('users.registration-form');
 	}
 
-	public function register()
+    /**
+     * Registering the user
+     * @return mixed
+     */
+    public function register()
 	{
         $email = Input::get('email');
         $password =Input::get('password');
@@ -84,6 +106,8 @@ class UsersController extends \BaseController {
             $msg = $validator->messages();
             return View::make('users.registration-form', array('message' => $msg));
         }
+        else
+        {
             try
             {
                 // Let's register a user.
@@ -92,62 +116,122 @@ class UsersController extends \BaseController {
                     'password' => $password,
                 ), true);
 
-                $msg = 'User was successfully created';
+                $msg = trans('users.registration_ok');
 
             }
             catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
             {
-                $msg = 'Login field is required.';
+                $msg = trans('users.login_field');
             }
             catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
             {
-                $msg = 'Password field is required.';
+                $msg = trans('users.password_field');
             }
             catch (Cartalyst\Sentry\Users\UserExistsException $e)
             {
-                $msg = 'User with this login already exists.';
+                $msg = trans('users.user_exists');
             }
-
+        }
         return View::make('users.registration-form', array('message' => $msg));
 	}
 
-	public function profile()
+    /**
+     * Showing user profile
+     * @return mixed
+     */
+    public function profile()
 	{
-        if ( ! Sentry::check())
-        {
-            return Redirect::to('users/login');
-        }
-        else
-        {
-            $msg = 'Welcome!';
-            $logout_url = URL::to('user/logout');
-            $user = Session::get('cartalyst_sentry.0');
-            $results = DB::select('select * from users where id = ?', array($user));
-            var_dump($results);
-            return View::make('users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
-        }
+        $msg = 'Welcome!';
+        $logout_url = URL::to('user/logout');
+        $user = Session::get('cartalyst_sentry.0');
+        $results = DB::select('select * from users where id = ?', array($user));
+        var_dump($results);
+        return View::make('users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
+    /**
+     * Sending reset code to the user
+     * @return mixed
+     */
+    public function reset_password()
 	{
-		//
+        $email = Input::get('email');
+
+        try
+        {
+            // Find the user using the user email address
+            $user = Sentry::findUserByLogin($email);
+
+            // Get the password reset code
+            $resetCode = $user->getResetPasswordCode();
+            $url = Redirect::to('/user/change_password/' . $resetCode);
+            $data = array('url' => $url);
+
+            // Now you can send this code to your user via email for example.
+            Mail::send('emails.reset-code', $data, function($message)
+            {
+                $message->from('us@example.com', 'Laravel');
+
+                $message->to('foo@example.com');
+
+            });
+
+            $msg = trans('users.reset_password');
+
+        }
+        catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+        {
+            $msg = trans('users.user_not_found');
+        }
+
+        return View::make('users.reset-password', array('message' => $msg));
+
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
+    /**
+     * Changing user password with given reset code
+     *
+     * @param $reset_code
+     * @return mixed
+     */
+    public function change_password($reset_code)
 	{
-		//
+        $new_password = Input::get('password');
+        $new_password_repeat = Input::get('password_repeat');
+        $msg = 'Please enter a new password';
+
+        if(!empty($new_password) && !empty($new_password_repeat))
+        {
+            if($new_password === $new_password_repeat)
+            {
+                try
+                {
+                    // Find the user using the user id
+                    $user = $user = Sentry::findUserByResetPasswordCode($reset_code);
+
+                    // Attempt to reset the user password
+                    if ($user->attemptResetPassword($reset_code, $new_password))
+                    {
+                        $msg = tans('users.password_change_ok');
+                        Redirect::to('user/login');
+                    }
+                    else
+                    {
+                        $msg = tans('users.password_change_error');
+                    }
+
+                }
+                catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+                {
+                    $msg = tans('users.reset_code_not_found');
+                }
+            }
+            else
+            {
+                $msg = trans('users.password_do_not_match');
+            }
+        }
+        return View::make('users.change-password', array('message' => $msg));
 	}
 
 }
