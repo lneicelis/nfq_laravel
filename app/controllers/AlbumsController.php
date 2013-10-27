@@ -10,9 +10,26 @@ class AlbumsController extends \BaseController {
 	public function index()
 	{
         $user_id = Sentry::getUser()->id;
-		$albums = Album::where('user_id', '=', $user_id)->get();
+        $default_cover = 'default.jpg';
 
-        return View::make('albums.albums-list', array('albums' => $albums));
+        $albums = DB::table('albums')
+            ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
+            ->where('albums.user_id', '=', $user_id)
+            ->select('albums.id', 'albums.title', 'albums.description', 'photos.file_name')
+            ->get();
+
+        if(empty($albums))
+        {
+            $alerts[] = array(
+                'type' => 'info',
+                'title' => 'Info',
+                'message' => 'You do not have any albums yet.');
+        }
+
+        return View::make('albums.albums-list', array(
+            'albums' => $albums,
+            'default_cover' => $default_cover,
+            'alerts' => @$alerts));
 	}
 
 	/**
@@ -36,23 +53,39 @@ class AlbumsController extends \BaseController {
             )
         );
 
-        if($validator->fails())
+        if(!empty($title))
         {
-            $msg = $validator->messages();
+            if($validator->fails())
+            {
+                $msg = $validator->messages();
+
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => 'There was a problem, the album was not created. Please try again.');
+            }
+            else
+            {
+                $user_id = Sentry::getUser()->id;
+
+                Album::create(array(
+                    'user_id' => $user_id,
+                    'title' => $title
+                ));
+
+                $alerts[] = array(
+                    'type' => 'success',
+                    'title' => 'Success',
+                    'message' => 'The album was successfully created.');
+            }
+        }else{
+            $alerts[] = array(
+                'type' => 'info',
+                'title' => 'Info',
+                'message' => 'Please enter the new album title.');
         }
-        else
-        {
-            $user_id = Sentry::getUser()->id;
 
-            Album::create(array(
-                'user_id' => $user_id,
-                'title' => $title
-            ));
-            $msg = array('The album was successfully created.');
-        }
-
-
-        return View::make('albums.new-album', array('message' => $msg));
+        return View::make('albums.new-album', array('alerts' => $alerts));
 	}
 
 	/**
@@ -60,9 +93,25 @@ class AlbumsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function setCover($photo_id)
 	{
-		//
+        $user_id = Sentry::getUser()->id;
+
+        $photo = DB::table('photos')
+            ->select('photos.file_name', 'albums.id')
+            ->leftJoin('albums', 'photos.album_id', '=', 'albums.id')
+            ->whereRaw('albums.user_id = ? AND photos.id = ?', array($user_id, $photo_id))
+            ->first();
+
+        if(!empty($photo)){
+            Album::find($photo->id)->update(array('cover_photo' => $photo_id));
+
+            $gritter[] = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Cover photo have been changed.');
+        }
+        return Redirect::back()->with('gritter', $gritter);
 	}
 
 	/**
@@ -73,8 +122,9 @@ class AlbumsController extends \BaseController {
 	 */
 	public function show($id)
 	{
+        $album = Album::find($id);
 
-        if(Album::find($id) === null)
+        if($album === null)
         {
             App::abort(404);
         }
@@ -87,10 +137,10 @@ class AlbumsController extends \BaseController {
         }
         else
         {
-            $msg = array('blabla');
+            $msg['gritter']['success'][] = array('blabla');
         }
 
-        return View::make('albums.photos-list', array('message' => $msg, 'photos' => $photos, 'album_id' => $id));
+        return View::make('albums.photos-list', array('message' => $msg, 'photos' => $photos, 'album' => $album));
 	}
 
 	/**
@@ -99,9 +149,39 @@ class AlbumsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit()
 	{
-		//
+
+		$album_id = Input::get('album_id');
+		$title = Input::get('title');
+		$description = Input::get('description');
+        var_dump($album_id, $title, $description);
+        $user_id = Sentry::getUser()->id;
+        $album = Album::whereRaw('id = ? AND user_id = ?',array($album_id, $user_id))->first();
+
+        if(!empty($album))
+        {
+            $validator = Validator::make(
+                array(
+                    'title' => $title,
+                    'description' => $description,
+                ),
+                array(
+                    'title' => 'required|max:100',
+                    'description' => 'max:255'
+                ),
+                array(
+                    'required' => 'Enter new album title, please.'
+                )
+            );
+            if(!$validator->fails()){
+                $album->title = $title;
+                $album->description = $description;
+                $album->save();
+
+                return Redirect::back();
+            }
+        }
 	}
 
 	/**

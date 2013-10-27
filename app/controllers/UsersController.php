@@ -5,16 +5,6 @@ use Illuminate\Support\Facades\Redirect;
 class UsersController extends \BaseController {
 
     /**
-     * Showing user login
-     * @return mixed
-     */
-
-    public function login()
-	{
-        return View::make('users.login-form');
-	}
-
-    /**
      * User logout
      * @return mixed
      */
@@ -30,46 +20,70 @@ class UsersController extends \BaseController {
      * User checking login
      * @return mixed
      */
-    public function auhenticate()
+    public function login()
 	{
         $email = Input::get('email');
         $password = Input::get('password');
 
-        try
-        {
-            // Set login credentials
-            $credentials = array(
-                'email'    => $email,
-                'password' => $password,
-            );
+        // Get the Throttle Provider
+        $throttleProvider = Sentry::getThrottleProvider();
 
-            // Try to authenticate the user
-            $user = Sentry::authenticate($credentials, false);
+        // Disable the Throttling Feature
+        $throttleProvider->disable();
 
-            return Redirect::to('user/profile');
-        }
-        catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
+        if(!empty($email) && !empty($password))
         {
-            $msg = trans('users.login_field');
-        }
-        catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
-        {
-            $msg = trans('users.login_field');
-        }
-        catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
-        {
-            $msg = trans('users.wrong_password');
-        }
-        catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
-        {
-            $msg = trans('users.wrong_user');
-        }
-        catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
-        {
-            $msg = trans('users.user_not_activated');
+            try
+            {
+                // Set login credentials
+                $credentials = array(
+                    'email'    => $email,
+                    'password' => $password,
+                );
+
+                // Try to authenticate the user
+                $user = Sentry::authenticate($credentials, false);
+
+                return Redirect::to('/');
+            }
+            catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.login_field'));
+            }
+            catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.login_field'));
+            }
+            catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.wrong_password'));
+            }
+            catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.wrong_user'));
+            }
+            catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.user_not_activated'));
+            }
         }
 
-        return View::make('users.login-form', array('email' => $email, 'message' => $msg));
+        return View::make('users.login-form', array('email' => $email, 'alerts' => @$alerts));
 	}
 
     /**
@@ -145,7 +159,7 @@ class UsersController extends \BaseController {
         $logout_url = URL::to('user/logout');
         $user = Session::get('cartalyst_sentry.0');
         $results = DB::select('select * from users where id = ?', array($user));
-        var_dump($results);
+
         return View::make('users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
 	}
 

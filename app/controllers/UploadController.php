@@ -2,12 +2,16 @@
 
 class UploadController extends \BaseController {
 
+    public function upload($album_id)
+    {
+        return View::make('upload.upload-form', array('album_id' => $album_id));
+    }
     /**
      * Processing the uploaded file
      *
      * @return mixed
      */
-    public function upload($album_id)
+    public function process($album_id)
 	{
         $user_id = Sentry::getUser()->id;
         $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->count();
@@ -17,24 +21,23 @@ class UploadController extends \BaseController {
             App::abort(404);
         }
 
-        $msg = 'Select a photo, please.';
-        if (Input::hasFile('userfile'))
+        if (Input::hasFile('file'))
         {
-            $file = Input::file('userfile');
+            $file = Input::file('file');
             $validator = Validator::make(
-                array('userfile' => $file),
-                array('userfile' => 'mimes:jpeg,bmp,png|max:2048')
+                array('file' => $file),
+                array('file' => 'mimes:jpeg,bmp,png|max:2048')
             );
 
             if ($validator->fails())
             {
-                $msg = $validator->messages();
+                return Response::make($validator->messages()->first(), 400);
             }
             else
             {
                 $new_file_name = str_random(16) . '.' . $file->getClientOriginalExtension();
 
-                $tmp_file = $_FILES['userfile']['tmp_name'];
+                $tmp_file = $file->getRealPath();
 
                 $create_thumb = $this->thumbnail($tmp_file, $new_file_name);
 
@@ -43,19 +46,28 @@ class UploadController extends \BaseController {
                 if($create_thumb && $create_image)
                 {
                     Photo::create(array(
-                        'user_id' => $user_id,
                         'album_id' => $album_id,
+                        'description' => $file->getClientOriginalName(),
                         'file_name' => $new_file_name));
 
-                    $msg = 'File successfully moved.';
+                    $alerts[] = array(
+                        'type' => 'success',
+                        'title' => 'Success',
+                        'message' => 'File was successfully uploaded.');
+
+                    return Response::json('success', 200);
                 }
                 else
                 {
-                    $msg = 'Failed to move the file.';
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error!',
+                        'message' => 'The file was not uploaded, please try again.');
+
+                    return Response::json('error', 400);
                 }
             }
         }
-        return View::make('upload.upload-form', array('message' => $msg, 'album_id' => $album_id));
 	}
 
 	/**

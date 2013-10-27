@@ -10,5 +10,5 @@ class photo extends Eloquent {
 
     protected $table = 'photos';
 
-    protected $fillable = array('album_id', 'user_id', 'file_name', 'description');
+    protected $fillable = array('album_id', 'file_name', 'description');
 } 
