@@ -1,5 +1,11 @@
 <?php
 
+Route::post('test',array(
+    'before' => 'csrf',
+    function(){
+    return Response::json(array('a' => Input::get('id')), 200);
+}));
+
 /**
  * Uploading photo
  */
@@ -14,55 +20,78 @@ Route::post('/upload/{album_id}', array(
 /**
  * Users authentification routes
  */
+Route::get('/user/login',array(
+    'uses' => 'UsersController@getLogin'));
+Route::post('/user/login', array(
+    'uses' => 'UsersController@postLogin'));
 
-Route::any('/user/login', array('uses' => 'UsersController@login'));
+Route::get('/user/logout', array(
+    'uses' => 'UsersController@getLogout'));
+Route::post('/user/logout', array(
+    'uses' => 'UsersController@postLogout'));
 
-Route::get('/user/logout', array('uses' => 'UsersController@logout'));
+Route::get('/user/register', array(
+    'uses' => 'UsersController@getRegister'));
+Route::post('/user/register', array(
+    'uses' => 'UsersController@postRegister'));
 
-Route::get('/user/register', array('uses' => 'UsersController@registration'));
-Route::post('/user/register', array('uses' => 'UsersController@register'));
+Route::get('/user/reset_password', array(
+    'uses' => 'UsersController@getResetPassword'));
+Route::post('/user/reset_password', array(
+    'uses' => 'UsersController@postResetPassword'));
 
-Route::get('/user/reset_password', array('uses' => 'UsersController@reset_password'));
-Route::post('/user/reset_password', array('uses' => 'UsersController@reset_password'));
-
-Route::get('/user/change_password/{reset_code}', array('uses' => 'UsersController@change_password'));
-Route::post('/user/change_password/{reset_code}', array('uses' => 'UsersController@change_password'));
+Route::get('/user/change_password/{reset_code}', array(
+    'uses' => 'UsersController@getChangePassword'));
+Route::post('/user/change_password/{reset_code}', array(
+    'uses' => 'UsersController@postChangePassword'));
 
 Route::get('/user/profile', array(
     'before' => 'auth',
-    'uses' => 'UsersController@profile'));
+    'uses' => 'UsersController@getProfile'));
 
 /**
  * Gallery albums routes
  */
 Route::get('/', array(
+    'as' => 'gallery',
     'before' => 'auth',
     'uses' => 'AlbumsController@index'));
 
-Route::get('gallery', array(
+Route::get('gallery/new-album', array(
     'before' => 'auth',
-    'uses' => 'AlbumsController@index'));
-
-Route::any('gallery/new-album', array(
-    'before' => 'auth',
-    'uses' => 'AlbumsController@create'
+    'uses' => 'AlbumsController@getNewAlbum'
+));
+Route::post('gallery/new-album', array(
+    'before' => 'auth|csrf',
+    'uses' => 'AlbumsController@postNewAlbum'
 ));
 
 /**
  * Albums routes
  */
-Route::get('album/{id}', array('uses' => 'AlbumsController@show'));
+Route::get('album/{id}', array(
+    'as' => 'album',
+    'uses' => 'AlbumsController@show'));
 
-Route::get('album/set_cover/{photo_id}', array(
+Route::post('album/set_cover', array(
     'before' => 'auth',
-    'uses' => 'AlbumsController@setCover'));
+    'uses' => 'AlbumsController@postSetCover'));
 
 Route::post('album/edit', array(
+    'before' => 'auth|csrf',
+    'uses' => 'AlbumsController@postEdit'));
+
+Route::get('album/destroy/{album_id}', array(
     'before' => 'auth',
-    'uses' => 'AlbumsController@edit'));
+    'uses' => 'AlbumsController@destroy'));
+
 /**
  * Photos routes
  */
-Route::get('photo/destory/{id}', array(
-    'before' => 'auth',
+Route::post('photo/destory', array(
+    'before' => 'auth|csrf',
     'uses' => 'PhotosController@destroy'));
+
+Route::post('photo/edit', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@edit'));

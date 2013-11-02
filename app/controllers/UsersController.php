@@ -8,7 +8,7 @@ class UsersController extends \BaseController {
      * User logout
      * @return mixed
      */
-    public function logout()
+    public function getLogout()
     {
         // Logs the user out
         Sentry::logout();
@@ -16,11 +16,16 @@ class UsersController extends \BaseController {
         return Redirect::to('user/login');
     }
 
+    public function getLogin()
+    {
+        return View::make('admin.users.login-form');
+    }
+
     /**
      * User checking login
      * @return mixed
      */
-    public function login()
+    public function postLogin()
 	{
         $email = Input::get('email');
         $password = Input::get('password');
@@ -31,94 +36,114 @@ class UsersController extends \BaseController {
         // Disable the Throttling Feature
         $throttleProvider->disable();
 
-        if(!empty($email) && !empty($password))
-        {
-            try
-            {
-                // Set login credentials
-                $credentials = array(
-                    'email'    => $email,
-                    'password' => $password,
-                );
-
-                // Try to authenticate the user
-                $user = Sentry::authenticate($credentials, false);
-
-                return Redirect::to('/');
-            }
-            catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
-            {
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => trans('users.login_field'));
-            }
-            catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
-            {
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => trans('users.login_field'));
-            }
-            catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
-            {
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => trans('users.wrong_password'));
-            }
-            catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
-            {
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => trans('users.wrong_user'));
-            }
-            catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
-            {
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => trans('users.user_not_activated'));
-            }
-        }
-
-        return View::make('users.login-form', array('email' => $email, 'alerts' => @$alerts));
-	}
-
-    /**
-     * Showing registration form
-     * @return mixed
-     */
-    public function registration()
-	{
-        return View::make('users.registration-form');
-	}
-
-    /**
-     * Registering the user
-     * @return mixed
-     */
-    public function register()
-	{
-        $email = Input::get('email');
-        $password =Input::get('password');
-
         $validator = Validator::make(
             array(
                 'email' => $email,
                 'password' => $password
             ),
             array(
+                'email' => 'required',
+                'password' => 'required'
+            )
+        );
+
+            if ($validator->fails())
+            {
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => $validator->messages()->first());
+            }else{
+                try
+                {
+                    // Set login credentials
+                    $credentials = array(
+                        'email'    => $email,
+                        'password' => $password,
+                    );
+
+                    // Try to authenticate the user
+                    $user = Sentry::authenticate($credentials, false);
+
+                    return Redirect::to('/');
+                }
+                catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
+                {
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.login_field'));
+                }
+                catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
+                {
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.login_field'));
+                }
+                catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
+                {
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.wrong_password'));
+                }
+                catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+                {
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.wrong_user'));
+                }
+                catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
+                {
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.user_not_activated'));
+                }
+            }
+
+
+        return View::make('admin.users.login-form', array(
+            'alerts' => @$alerts,
+            'email' => @$email));
+	}
+
+    public function getRegister()
+    {
+        return View::make('admin.users.registration-form');
+    }
+
+    /**
+     * Registering the user
+     * @return mixed
+     */
+    public function postRegister()
+	{
+        $email = Input::get('email');
+        $password =Input::get('password');
+        $confirm_password = Input::get('confirm_password');
+
+        $validator = Validator::make(
+            array(
+                'email' => $email,
+                'password' => $password,
+                'confirm_password' => $confirm_password
+            ),
+            array(
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:6'
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|same:password'
             )
         );
 
         if ($validator->fails())
         {
-            $msg = $validator->messages();
-            return View::make('users.registration-form', array('message' => $msg));
+            $alerts[] = array(
+                'type' => 'danger',
+                'title' => 'Error',
+                'message' => $validator->messages()->first());
         }
         else
         {
@@ -130,44 +155,63 @@ class UsersController extends \BaseController {
                     'password' => $password,
                 ), true);
 
-                $msg = trans('users.registration_ok');
+                $alerts[] = array(
+                    'type' => 'success',
+                    'title' => 'Success',
+                    'message' => trans('users.registration_ok'));
 
             }
             catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
             {
-                $msg = trans('users.login_field');
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.login_field'));
             }
             catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
             {
-                $msg = trans('users.password_field');
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.password_field'));
             }
             catch (Cartalyst\Sentry\Users\UserExistsException $e)
             {
-                $msg = trans('users.user_exists');
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.user_exists'));
             }
         }
-        return View::make('users.registration-form', array('message' => $msg));
+        return View::make('admin.users.registration-form', array(
+            'alerts' => @$alerts,
+            'email' => @email));
 	}
 
     /**
      * Showing user profile
      * @return mixed
      */
-    public function profile()
+    public function getProfile()
 	{
         $msg = 'Welcome!';
         $logout_url = URL::to('user/logout');
         $user = Session::get('cartalyst_sentry.0');
         $results = DB::select('select * from users where id = ?', array($user));
 
-        return View::make('users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
+        return View::make('admin.users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
 	}
+
+    public function getResetPassword()
+    {
+        return View::make('admin.users.reset-password');
+    }
 
     /**
      * Sending reset code to the user
      * @return mixed
      */
-    public function reset_password()
+    public function postResetPassword()
 	{
         $email = Input::get('email');
 
@@ -190,17 +234,28 @@ class UsersController extends \BaseController {
 
             });
 
-            $msg = trans('users.reset_password');
+            $alerts[] = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => trans('users.reset_password'));
 
         }
         catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
         {
-            $msg = trans('users.user_not_found');
+            $alerts[] = array(
+                'type' => 'danger',
+                'title' => 'Error',
+                'message' => trans('users.user_not_found'));
         }
 
-        return View::make('users.reset-password', array('message' => $msg));
+        return View::make('admin.users.reset-password', array('alerts' => @$alerts));
 
 	}
+
+    public function getChangePassword()
+    {
+        return View::make('admin.users.change-password');
+    }
 
     /**
      * Changing user password with given reset code
@@ -208,10 +263,10 @@ class UsersController extends \BaseController {
      * @param $reset_code
      * @return mixed
      */
-    public function change_password($reset_code)
+    public function postChangePassword($reset_code)
 	{
         $new_password = Input::get('password');
-        $new_password_repeat = Input::get('password_repeat');
+        $new_password_repeat = Input::get('confirm_password');
         $msg = 'Please enter a new password';
 
         if(!empty($new_password) && !empty($new_password_repeat))
@@ -231,21 +286,30 @@ class UsersController extends \BaseController {
                     }
                     else
                     {
-                        $msg = tans('users.password_change_error');
+                        $alerts[] = array(
+                            'type' => 'success',
+                            'title' => 'Success',
+                            'message' =>  tans('users.password_change_error'));
                     }
 
                 }
                 catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
                 {
-                    $msg = tans('users.reset_code_not_found');
+                    $alerts[] = array(
+                        'type' => 'danger',
+                        'title' => 'Error',
+                        'message' => trans('users.reset_code_not_found'));
                 }
             }
             else
             {
-                $msg = trans('users.password_do_not_match');
+                $alerts[] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.passwords_do_not_match'));
             }
         }
-        return View::make('users.change-password', array('message' => $msg));
+        return View::make('admin.users.change-password', array('alerts' => @$alerts));
 	}
 
 }

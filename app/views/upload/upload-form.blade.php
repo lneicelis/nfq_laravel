@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('admin.layouts.master')
 
 @section('head-css')
     @parent
@@ -7,7 +7,6 @@
 @stop
 
 @section('content')
-    <p><a href="{{ URL::asset('album/' . $album_id) }}">Go back to the album</a></p>
 
     <form action="{{ URL::to('upload/' . $album_id) }}" method="post" enctype="multipart/form-data" id="userfile" class="dropzone">
         <div class="fallback">

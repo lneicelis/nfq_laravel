@@ -2,6 +2,10 @@
 
 class AlbumsController extends \BaseController {
 
+    public function __construct(){
+        $this->crumbAdd(URL::route('gallery'), 'Gallery');
+    }
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -26,10 +30,11 @@ class AlbumsController extends \BaseController {
                 'message' => 'You do not have any albums yet.');
         }
 
-        return View::make('albums.albums-list', array(
+        return View::make('admin.albums.albums-list', array(
+            'crumb' => $this->crumbGet(),
+            'alerts' => @$alerts,
             'albums' => $albums,
-            'default_cover' => $default_cover,
-            'alerts' => @$alerts));
+            'default_cover' => $default_cover));
 	}
 
 	/**
@@ -37,7 +42,15 @@ class AlbumsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create()
+    public function getNewAlbum()
+    {
+        $this->crumbAdd('#', 'Create an album');
+
+        return View::make('admin.albums.new-album', array(
+            'crumb' => $this->crumbGet()));
+    }
+
+	public function postNewAlbum()
 	{
         $title = Input::get('title');
 
@@ -85,7 +98,11 @@ class AlbumsController extends \BaseController {
                 'message' => 'Please enter the new album title.');
         }
 
-        return View::make('albums.new-album', array('alerts' => $alerts));
+        $this->crumbAdd('#', 'Create an album');
+
+        return View::make('admin.albums.new-album', array(
+            'crumb' => $this->crumbGet(),
+            'alerts' => $alerts));
 	}
 
 	/**
@@ -93,9 +110,10 @@ class AlbumsController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function setCover($photo_id)
+	public function postSetCover()
 	{
         $user_id = Sentry::getUser()->id;
+        $photo_id = Input::get('id');
 
         $photo = DB::table('photos')
             ->select('photos.file_name', 'albums.id')
@@ -106,12 +124,12 @@ class AlbumsController extends \BaseController {
         if(!empty($photo)){
             Album::find($photo->id)->update(array('cover_photo' => $photo_id));
 
-            $gritter[] = array(
+            $gritter = array(
                 'type' => 'success',
                 'title' => 'Success',
                 'message' => 'Cover photo have been changed.');
         }
-        return Redirect::back()->with('gritter', $gritter);
+        return Response::json($gritter, 200);
 	}
 
 	/**
@@ -133,14 +151,19 @@ class AlbumsController extends \BaseController {
 
         if($photos->count() === 0)
         {
-            $msg = array('Album is empty.');
-        }
-        else
-        {
-            $msg['gritter']['success'][] = array('blabla');
+            $alerts[] = array(
+                'type' => 'info',
+                'title' => 'Info',
+                'message' => 'The album is empty');
         }
 
-        return View::make('albums.photos-list', array('message' => $msg, 'photos' => $photos, 'album' => $album));
+        $this->crumbAdd('#', $album->title . ' album');
+
+        return View::make('admin.albums.photos-list', array(
+            'crumb' => $this->crumbGet(),
+            'alerts' => @$alerts,
+            'album' => $album,
+            'photos' => $photos));
 	}
 
 	/**
@@ -149,13 +172,12 @@ class AlbumsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit()
+	public function postEdit()
 	{
 
 		$album_id = Input::get('album_id');
 		$title = Input::get('title');
 		$description = Input::get('description');
-        var_dump($album_id, $title, $description);
         $user_id = Sentry::getUser()->id;
         $album = Album::whereRaw('id = ? AND user_id = ?',array($album_id, $user_id))->first();
 
@@ -179,20 +201,18 @@ class AlbumsController extends \BaseController {
                 $album->description = $description;
                 $album->save();
 
-                return Redirect::back();
+                $gritter[] = array(
+                    'type' => 'success',
+                    'title' => 'Success',
+                    'message' => 'Album was successfully edited.');
+            }else{
+                $gritter[] = array(
+                    'type' => 'error',
+                    'title' => 'Error',
+                    'message' => $validator->messages()->first());
             }
         }
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
+        return Redirect::back()->with(array('gritter' => $gritter));
 	}
 
 	/**
@@ -201,9 +221,33 @@ class AlbumsController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy($album_id)
 	{
-		//
+        $album = Album::find($album_id);
+        if($album === null)
+        {
+            App::abort(404);
+        }
+
+        $photos = Photo::where('album_id', '=', $album_id)
+            ->select('id', 'file_name')
+            ->get();
+
+        if(!empty($photos))
+        {
+            foreach($photos as $photo)
+            {
+                @unlink(public_path('gallery/images/') . $photo->file_name);
+                @unlink(public_path('gallery/thumbs/') . $photo->file_name);
+
+                Photo::destroy($photo->id);
+
+            }
+        }
+
+        Album::destroy($album_id);
+
+        return Redirect::back();
 	}
 
 }

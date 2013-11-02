@@ -4,7 +4,15 @@ class UploadController extends \BaseController {
 
     public function upload($album_id)
     {
-        return View::make('upload.upload-form', array('album_id' => $album_id));
+        $album = Album::find($album_id);
+
+        $this->crumbAdd(URL::route('gallery'), 'Gallery');
+        $this->crumbAdd(URL::route('album', array('id' => $album_id)), $album->title . ' album');
+        $this->crumbAdd('#', 'Upload photos');
+
+        return View::make('upload.upload-form', array(
+            'crumb' => $this->crumbGet(),
+            'album_id' => $album_id));
     }
     /**
      * Processing the uploaded file
@@ -80,7 +88,7 @@ class UploadController extends \BaseController {
 	{
         $width = 200;
         $height = 200;
-        $save = '../public/thumbs/' . $save_name;
+        $save = public_path('gallery/thumbs/' . $save_name);
 
         try{
             $imagine = new \Imagine\Gd\Imagine();
@@ -107,7 +115,7 @@ class UploadController extends \BaseController {
     {
         $width = 800;
         $height = 800;
-        $save = '../public/images/' . $save_name;
+        $save = public_path('gallery/images/' . $save_name);
 
         try{
             $imagine = new \Imagine\Gd\Imagine();
