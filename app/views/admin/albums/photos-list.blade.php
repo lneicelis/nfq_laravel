@@ -1,5 +1,10 @@
 @extends('admin.layouts.master')
 
+@section('head-css')
+    @parent
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/chosen.css') }}" />
+@endsection
+
 @section('page-header')
     <div class="page-header">
         <h1>
@@ -14,12 +19,46 @@
 
 @section('content')
 
-    <p><a href="{{ URL::to('upload/' . $album->id) }}">Upload new photos</a></p>
+    <p>
+        <a class="btn btn-primary" href="{{ URL::to('upload/' . $album->id) }}">
+            <i class="icon-cloud-upload align-top bigger-125"></i>
+            Upload new photos
+        </a>
+        <a id="transfer" class="btn btn-success" href="#">
+            <i class="icon-exchange align-top bigger-125"></i>
+            Move photos
+        </a>
+    </p>
 
-    <ul class="ace-thumbnails">
+    <div class="col-sm-4 pull-right transfer-div" style="display: none">
+        <div class="widget-box">
+            <div class="widget-header header-color-blue2">
+                <h4 class="lighter smaller">Choose album
+                    <select class="chosen-select select-album">
+                        <option value="">&nbsp;</option>
+                        @foreach($albums as $album)
+                        <option value="{{ $album->id }}">{{ $album->title }}</option>
+                        @endforeach
+                    </select>
+                </h4>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main padding-8">
+
+                    <ul id="album-to" class="ace-thumbnails" style="min-height: 345px">
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="ace-thumbnails" id="album-from">
     @foreach ($photos as $photo)
 
-        <li style="width: 200px; height: 200px">
+        <li class="med-photo-thumb" data-photo-id="{{ $photo->id }}">
             <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" title="{{ $photo->description }}" data-rel="colorbox">
                 <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" />
 
@@ -35,7 +74,11 @@
                     <i class="icon-pencil" title="Edit photo"></i>
                 </a>
 
-                <a href="{{ URL::to('photo/destory') }}" class="ajax" data-id="{{ $photo->id }}" title="Delete photo">
+                <a href="#" class="photo-crop-form" data-photo-id="" data-photo-description="">
+                    <i class="icon-crop" title="Crop photo"></i>
+                </a>
+
+                <a href="{{ URL::action('PhotosController@destroy') }}" class="ajax" data-id="{{ $photo->id }}"  data-action="delete-photo" title="Delete photo">
                     <i class="icon-remove red"></i>
                 </a>
             </div>
@@ -44,136 +87,122 @@
     @endforeach
     </ul>
 
-<div id="photo-edit-modal-form" class="modal" tabindex="-1">
-    <div class="modal-dialog">
-        <form method="post" action="{{ URL::to('photo/edit') }}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="blue bigger">Photo edit</h4>
-                </div>
+    @include('admin.modals.photo-list-modal')
 
-                <div class="modal-body overflow-visible">
-                    <div class="row">
-
-                        <div class="col-sm-10 col-sm-offset-1">
-
-                            <div class="space-4"></div>
-
-                            <div class="form-group">
-                                <label for="form-field-username">Photo information</label>
-                                <div>
-                                    <input id="photo-edit-form-album-id" name="photo_id" value="" type="hidden" />
-
-                                    <textarea id="photo-edit-form-description" name="description" class="form-control limited" maxlength="250" placeholder="Description"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-sm" data-dismiss="modal">
-                        <i class="icon-remove"></i>
-                        Cancel
-                    </button>
-
-                    <button class="btn btn-sm btn-primary">
-                        <i class="icon-ok"></i>
-                        Save
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 @stop
 
 
 @section('scripts')
 
-    <!-- basic scripts -->
-
-    <!--[if !IE]> -->
-
-    <script type="text/javascript">
-        window.jQuery || document.write("<script src='{{ URL::asset('assets/js/jquery-2.0.3.min.js') }}'>"+"<"+"/script>");
-    </script>
-
-    <!-- <![endif]-->
-
-    <!--[if IE]>
-    <script type="text/javascript">
-        window.jQuery || document.write("<script src='{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}'>"+"<"+"/script>");
-    </script>
-    <![endif]-->
-
-
-    <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/typeahead-bs2.min.js') }}"></script>
-
     <!-- page specific plugin scripts -->
 
     <script src="{{ URL::asset('assets/js/jquery.colorbox-min.js') }}"></script>
-
-    <!-- ace scripts -->
-
-    <script src="{{ URL::asset('assets/js/ace-elements.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/ace.min.js') }}"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="{{ URL::asset('assets/js/chosen.jquery.min.js') }}"></script>
 
     <!-- inline scripts related to this page -->
 
     <script type="text/javascript">
-        jQuery(function ($) {
-            var colorbox_params = {
-                reposition: true,
-                scalePhotos: true,
-                scrolling: false,
-                previous: '<i class="icon-arrow-left"></i>',
-                next: '<i class="icon-arrow-right"></i>',
-                close: '&times;',
-                current: '{current} of {total}',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                onOpen: function () {
-                    document.body.style.overflow = 'hidden';
-                },
-                onClosed: function () {
-                    document.body.style.overflow = 'auto';
-                },
-                onComplete: function () {
-                    $.colorbox.resize();
-                }
-            };
 
-            $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
-            $("#cboxLoadingGraphic").append("<i class='icon-spinner orange'></i>");//let's add a custom loading icon
 
-        });
+            var $moveFrom = "#album-from";
+            var $moveTo = "#album-to";
+            var $albumToId = "data-album-to-id";
+            var $photoId = "data-photo-id";
+            var $postTransferUrl = "{{ URL::action('PhotosController@postTransfer') }}";
+            var $getPhotos = "{{ URL::action('PhotosController@getPhotos') }}";
+        $(function(){
+            function initDragAndDrop(){
+                $( "li", "#album-from").draggable({
+                    cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+                    revert: "invalid", // when not dropped, the item will revert back to its initial position
+                    containment: "document",
+                    helper: "clone",
+                    cursor: "move"
+                });
 
-        $('.photo-edit-form').on('click', function () {
-            var photoId = $(this).attr('data-photo-id');
-            var description = $(this).attr('data-photo-description');
+                $("#album-to").droppable({
+                    accept: "#album-from > li",
+                    activeClass: "custom-state-active",
+                    drop: function( event, ui ) {
+                        var url = $postTransferUrl;
+                        var obj = ui.draggable;
+                        var data = {
+                            album_id: $($moveTo).attr($albumToId),
+                            photo_id: $(obj).attr($photoId)
+                        }
 
-            $("#photo-edit-form-album-id").attr('value', photoId);
+                        $.ajax({
+                            url: url,
+                            type: "post",
+                            data: data,
+                            success: function(result,status,xhr){
+                                movePhotoAnimation( obj );
+                                gritter("success", "Success", "The photo has been successfully moved.");
+                                console.log('ajax move success');
+                            },
+                            error:function(xhr,status,error){
+                                event.preventDefault();
+                                gritter("error", "Error", "There was an error. The the request was denied. Please try again.");
+                                console.log('ajax move error');
+                            }
+                        });
 
-            if(description !== false){
-                $("#photo-edit-form-description").val(description);
-            }else{
-                $("#photo-edit-form-description").val('');
+                    }
+                });
             }
 
-            $('#photo-edit-modal-form').modal('show')
-        });
+            function movePhotoAnimation( $item ) {
+                $item.fadeOut(function() {
 
-        $(".bootbox-confirm").on(ace.click_event, function() {
-            bootbox.confirm("Are you sure?", function(result) {
-                if(result) {
-                    return true;
-                }else{
-                    return false;
-                }
+                    $item.find( "div.tools" ).remove();
+                    $item.appendTo( $moveTo ).fadeIn(function() {
+                        $item
+                            .animate({
+                                width: "100px",
+                                height: "100px"})
+                            .find("img")
+                            .animate({
+                                width: "100px",
+                                height: "100px"});
+                    });
+                });
+            }
+
+            $(".select-album").change(function(event)
+            {
+                event.preventDefault();
+
+                var url = $getPhotos;
+                var id = $(this).val();
+                var list = '';
+                var appendTo = "#album-to";
+                var data = {
+                    _token: token, //global token, that has been set in the head of HTML
+                    id : id
+                };
+
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: data,
+                    success: function(result,status,xhr){
+                        $.each(result, function (index, value) {
+                            list = list +
+                                "<li class=\"small-photo-thumb\">" +
+                                "<a href=\"\" title=\"\">" +
+                                "<img class=\"small-photo-thumb\" src=\"{{ URL::asset('gallery/thumbs/') }}/" + value.file_name + "\" />" +
+                                "</a>" +
+                                "</li>";
+                        });
+                        $(appendTo).attr($albumToId, id).empty().append(list);
+                        initDragAndDrop();
+                    },
+                    error:function(xhr,status,error){
+                        //gritter("error", "Error", "There was an error. The the request was denied. Please try again.");
+                    }
+                });
+
             });
         });
     </script>

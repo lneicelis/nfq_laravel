@@ -124,9 +124,10 @@
         </a>
     </div><!-- /.main-container -->
 
-	@yield('scripts')
-
+    @include('admin.resources.js_bottom')
     @include('admin.resources.gritter')
+
+	@yield('scripts')
 
 </body>
 </html>

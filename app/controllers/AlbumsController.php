@@ -141,6 +141,7 @@ class AlbumsController extends \BaseController {
 	public function show($id)
 	{
         $album = Album::find($id);
+        $albums = Album::where('id', '!=', $id)->get();
 
         if($album === null)
         {
@@ -163,6 +164,7 @@ class AlbumsController extends \BaseController {
             'crumb' => $this->crumbGet(),
             'alerts' => @$alerts,
             'album' => $album,
+            'albums' => $albums,
             'photos' => $photos));
 	}
 

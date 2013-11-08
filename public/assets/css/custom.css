@@ -1,0 +1,13 @@
+.med-photo-thumb{
+    width: 200px;
+    height: 200px;
+}
+
+.small-photo-thumb{
+    width: 100px;
+    height: 100px;
+    z-index: 1000;
+}
+li.active-result{
+    color: #000000;
+}

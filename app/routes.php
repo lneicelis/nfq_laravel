@@ -95,3 +95,11 @@ Route::post('photo/destory', array(
 Route::post('photo/edit', array(
     'before' => 'auth',
     'uses' => 'PhotosController@edit'));
+
+Route::post('photo/transfer', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@postTransfer'));
+
+Route::post('photo/get-all', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@getPhotos'));

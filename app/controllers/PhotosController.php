@@ -93,4 +93,34 @@ class PhotosController extends \BaseController {
 
 	}
 
+    public function getPhotos(){
+
+        $id = Input::get('id');
+
+        $album = Album::find($id);
+
+        if($album === null)
+        {
+            App::abort(404);
+        }
+
+        $photos = Photo::where('album_id', '=', $id)->get();
+
+        return Response::json($photos, 200);
+
+    }
+
+    public function postTransfer()
+    {
+        $album_id = Input::get('album_id');
+        $photo_id = Input::get('photo_id');
+
+        $affectedRows = Photo::where('id', '=', $photo_id)->update(array('album_id' => $album_id));
+        if($affectedRows > 0){
+            return Response::json(200);
+        }else{
+            Return response::json(404);
+        }
+
+    }
 }
