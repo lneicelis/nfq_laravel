@@ -6,14 +6,15 @@ class UploadController extends \BaseController {
     {
         $album = Album::find($album_id);
 
-        $this->crumbAdd(URL::route('gallery'), 'Gallery');
-        $this->crumbAdd(URL::route('album', array('id' => $album_id)), $album->title . ' album');
-        $this->crumbAdd('#', 'Upload photos');
+        Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
+        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
+        Breadcrumbs::addCrumb($album->title . ' album', URL::action('AlbumsController@show', array('id' => $album_id)));
+        Breadcrumbs::addCrumb('Upload photos');
 
         return View::make('upload.upload-form', array(
-            'crumb' => $this->crumbGet(),
             'album_id' => $album_id));
     }
+
     /**
      * Processing the uploaded file
      *

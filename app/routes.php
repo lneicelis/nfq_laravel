@@ -103,3 +103,14 @@ Route::post('photo/transfer', array(
 Route::post('photo/get-all', array(
     'before' => 'auth',
     'uses' => 'PhotosController@getPhotos'));
+
+Route::get('test', function(){
+
+    Breadcrumbs::addCrumb('Home', '/');
+    Breadcrumbs::addCrumb('Pages', 'pages');
+    Breadcrumbs::addCrumb('Subpage', 'subpage');
+    Breadcrumbs::addCrumb('Subsubpage', '/subsubpage');
+
+    echo Breadcrumbs::render();
+
+});

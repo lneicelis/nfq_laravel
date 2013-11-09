@@ -12,4 +12,9 @@ class Album extends Eloquent {
 
     protected $fillable = array('user_id', 'title', 'description', 'cover_photo');
 
+    public function photos()
+    {
+        return $this->hasMany('Photo', 'album_id');
+    }
+
 } 

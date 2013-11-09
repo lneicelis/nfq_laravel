@@ -85,19 +85,7 @@
 
             <div class="main-content" style="margin-left: 0px;">
                 <div class="breadcrumbs" id="breadcrumbs">
-                    <ul class="breadcrumb">
-                        <li>
-                            <i class="icon-home home-icon"></i>
-                            <a href="{{ URL::to('/') }}">Home</a>
-                        </li>
-                        @if(!empty($crumb))
-                            @foreach($crumb as $href)
-                                <li>
-                                    <a href="{{ $href['url'] }}">{{ $href['title'] }}</a>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul><!-- .breadcrumb -->
+                    {{ Breadcrumbs::render() }}
                 </div>
 
                 <div class="page-content">

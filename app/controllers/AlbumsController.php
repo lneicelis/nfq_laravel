@@ -3,22 +3,19 @@
 class AlbumsController extends \BaseController {
 
     public function __construct(){
-        $this->crumbAdd(URL::route('gallery'), 'Gallery');
+        Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
+        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
     }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function index()
 	{
-        $user_id = Sentry::getUser()->id;
+        $user = Sentry::getUser();
         $default_cover = 'default.jpg';
+
 
         $albums = DB::table('albums')
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
-            ->where('albums.user_id', '=', $user_id)
+            ->where('albums.user_id', '=', $user->id)
             ->select('albums.id', 'albums.title', 'albums.description', 'photos.file_name')
             ->get();
 
@@ -31,7 +28,6 @@ class AlbumsController extends \BaseController {
         }
 
         return View::make('admin.albums.albums-list', array(
-            'crumb' => $this->crumbGet(),
             'alerts' => @$alerts,
             'albums' => $albums,
             'default_cover' => $default_cover));
@@ -44,10 +40,9 @@ class AlbumsController extends \BaseController {
 	 */
     public function getNewAlbum()
     {
-        $this->crumbAdd('#', 'Create an album');
+        Breadcrumbs::addCrumb('Create an album', URL::action('AlbumsController@getNewAlbum'));
 
-        return View::make('admin.albums.new-album', array(
-            'crumb' => $this->crumbGet()));
+        return View::make('admin.albums.new-album', array());
     }
 
 	public function postNewAlbum()
@@ -105,11 +100,6 @@ class AlbumsController extends \BaseController {
             'alerts' => $alerts));
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
 	public function postSetCover()
 	{
         $user_id = Sentry::getUser()->id;
@@ -132,12 +122,6 @@ class AlbumsController extends \BaseController {
         return Response::json($gritter, 200);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function show($id)
 	{
         $album = Album::find($id);
@@ -148,9 +132,7 @@ class AlbumsController extends \BaseController {
             App::abort(404);
         }
 
-        $photos = Photo::where('album_id', '=', $id)->get();
-
-        if($photos->count() === 0)
+        if($album->photos->count() === 0)
         {
             $alerts[] = array(
                 'type' => 'info',
@@ -158,22 +140,15 @@ class AlbumsController extends \BaseController {
                 'message' => 'The album is empty');
         }
 
-        $this->crumbAdd('#', $album->title . ' album');
+        Breadcrumbs::addCrumb($album->title . ' album');
 
         return View::make('admin.albums.photos-list', array(
-            'crumb' => $this->crumbGet(),
             'alerts' => @$alerts,
             'album' => $album,
             'albums' => $albums,
-            'photos' => $photos));
+            'photos' => $album->photos));
 	}
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function postEdit()
 	{
 
@@ -217,12 +192,7 @@ class AlbumsController extends \BaseController {
         return Redirect::back()->with(array('gritter' => $gritter));
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
+
 	public function destroy($album_id)
 	{
         $album = Album::find($album_id);
@@ -231,9 +201,7 @@ class AlbumsController extends \BaseController {
             App::abort(404);
         }
 
-        $photos = Photo::where('album_id', '=', $album_id)
-            ->select('id', 'file_name')
-            ->get();
+        $photos = $album->photos;
 
         if(!empty($photos))
         {
