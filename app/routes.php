@@ -6,16 +6,6 @@ Route::post('test',array(
     return Response::json(array('a' => Input::get('id')), 200);
 }));
 
-/**
- * Uploading photo
- */
-Route::get('/upload/{album_id}', array(
-    'before' => 'auth',
-    'uses' => 'UploadController@upload'));
-
-Route::post('/upload/{album_id}', array(
-    'before' => 'auth',
-    'uses' => 'UploadController@process'));
 
 /**
  * Users authentification routes
@@ -88,6 +78,15 @@ Route::get('album/destroy/{album_id}', array(
 /**
  * Photos routes
  */
+
+Route::get('/upload/{album_id}', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@getUpload'));
+
+Route::post('/upload/{album_id}', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@postUpload'));
+
 Route::post('photo/destory', array(
     'before' => 'auth|csrf',
     'uses' => 'PhotosController@destroy'));
@@ -104,13 +103,6 @@ Route::post('photo/get-all', array(
     'before' => 'auth',
     'uses' => 'PhotosController@getPhotos'));
 
-Route::get('test', function(){
-
-    Breadcrumbs::addCrumb('Home', '/');
-    Breadcrumbs::addCrumb('Pages', 'pages');
-    Breadcrumbs::addCrumb('Subpage', 'subpage');
-    Breadcrumbs::addCrumb('Subsubpage', '/subsubpage');
-
-    echo Breadcrumbs::render();
-
-});
+Route::post('photo/crop', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@postCrop'));

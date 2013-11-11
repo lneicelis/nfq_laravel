@@ -5,9 +5,9 @@
 @if(Session::has('gritter'))
     <script>
         $(function(){
-            (document).ready(function(){
+            $(document).ready(function(){
             @foreach(Session::get('gritter') as $msg)
-                gritter('{{ $msg['type'] }}', '{{ $msg['title'] }}', '{{ $msg['message'] }}')
+                gritter('{{ $msg['type'] }}', '{{ $msg['title'] }}', '{{ $msg['message'] }}');
             @endforeach
             });
         });

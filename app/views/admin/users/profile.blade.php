@@ -1,8 +1,4 @@
-@extends('layouts.master')
-
-@section('sidebar')
-    <p>{{ @$message }}</p>
-@stop
+@extends('admin.layouts.master')
 
 @section('content')
     <a href="{{ $logout_url }}">Logout</a>

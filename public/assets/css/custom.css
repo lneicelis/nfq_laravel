@@ -11,3 +11,25 @@
 li.active-result{
     color: #000000;
 }
+
+.menu-toggler{
+    display: none;
+}
+
+.modal-crop-form {
+    margin-right: auto;
+    margin-left: auto;
+    width: 850px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.crop-photo{
+    display: block;
+    margin: 0 auto;
+}
+
+.jcrop-holder{
+    margin-left: auto;
+    margin-right: auto;
+}

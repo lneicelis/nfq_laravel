@@ -116,6 +116,7 @@ return array(
         'Cartalyst\Sentry\SentryServiceProvider',
 
         'Creitive\Breadcrumbs\BreadcrumbsServiceProvider',
+        'Luknei\Gallery\GalleryServiceProvider',
 
 	),
 
@@ -184,6 +185,7 @@ return array(
         'Sentry'          => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
 
         'Breadcrumbs'     => 'Creitive\Breadcrumbs\Facades\Breadcrumbs',
+        'Gallery'         => 'Luknei\Gallery\Facades\Gallery'
 
 	),
 

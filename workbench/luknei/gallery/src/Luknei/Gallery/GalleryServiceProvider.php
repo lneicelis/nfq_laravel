@@ -1,8 +1,8 @@
-<?php namespace Luknei\Users;
+<?php namespace Luknei\Gallery;
 
 use Illuminate\Support\ServiceProvider;
 
-class UsersServiceProvider extends ServiceProvider {
+class GalleryServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -18,7 +18,10 @@ class UsersServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+        $this->app['gallery'] = $this->app->share(function($app)
+        {
+            return new Gallery;
+        });
 	}
 
 	/**
@@ -30,5 +33,15 @@ class UsersServiceProvider extends ServiceProvider {
 	{
 		return array();
 	}
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->package('luknei/gallery');
+    }
 
 }

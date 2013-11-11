@@ -66,7 +66,7 @@ $('.photo-edit-form').on('click', function () {
         $("#photo-edit-form-description").val('');
     }
 
-    $('#photo-edit-modal-form').modal('show')
+    $('#photo-edit-modal-form').modal('show');
 });
 
 $(function(){

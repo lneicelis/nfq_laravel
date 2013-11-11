@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <form action="{{ URL::to('upload/' . $album_id) }}" method="post" enctype="multipart/form-data" id="userfile" class="dropzone">
+    <form action="{{ URL::action('PhotosController@postUpload', array('album_id' => $album_id)) }}" method="post" enctype="multipart/form-data" id="userfile" class="dropzone">
         <div class="fallback">
             <input name="file" type="file" multiple="" />
             <button>Upload</button>
