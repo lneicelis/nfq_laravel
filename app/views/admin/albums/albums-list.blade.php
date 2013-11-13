@@ -1,10 +1,12 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    <p><a href="{{ URL::action('AlbumsController@getNewAlbum') }}">Create a new album</a></p>
-
-    <p>Albums</p>
-
+    <p>
+        <a id="new-album" class="btn btn-primary" href="#">
+            <i class="icon-plus align-top bigger-125"></i>
+            Create a new album
+        </a>
+    </p>
     <ul class="ace-thumbnails">
         @foreach ($albums as $album)
 
@@ -25,7 +27,7 @@
             </a>
             <div class="tools">
 
-                <a href="#album-edit-form" class="album-edit-form" data-album-id="{{ $album->id }}" data-title="{{ @$album->title }}" data-description="{{ @$album->description }}">
+                <a href="#album-edit-form" class="album-edit-form" data-album-id="{{ $album->id }}" data-album-title="{{ @$album->title }}" data-album-description="{{ @$album->description }}">
                     <i class="icon-pencil"></i>
                 </a>
 
@@ -38,76 +40,25 @@
         @endforeach
     </ul>
 
-    <div id="album-edit-modal-form" class="modal" tabindex="-1">
-        <div class="modal-dialog">
-            <form method="post" action="{{ URL::action('AlbumsController@postEdit') }}">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="blue bigger">Album edit</h4>
-                    </div>
+    @include('admin.modals.album-new-modal')
+    @include('admin.modals.album-edit-modal')
 
-                    <div class="modal-body overflow-visible">
-                        <div class="row">
-
-                                <div class="col-sm-10 col-sm-offset-1">
-
-                                    <div class="space-4"></div>
-
-                                    <div class="form-group">
-                                        <label for="form-field-username">Album information</label>
-                                        <div>
-                                            {{ Form::token() }}
-                                            <input id="album-edit-form-album-id" name="album_id" value="" type="hidden" />
-                                            <input id="album-edit-form-title" name="title"  class="input-xxlarge" type="text" id="" placeholder="Title" />
-                                            <div class="space-4"></div>
-                                            <textarea id="album-edit-form-description" name="description" class="form-control limited" maxlength="250" placeholder="Description"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-sm" data-dismiss="modal">
-                            <i class="icon-remove"></i>
-                            Cancel
-                        </button>
-
-                        <button class="btn btn-sm btn-primary">
-                            <i class="icon-ok"></i>
-                            Save
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 @stop
 
 @section('scripts')
 
+    <!-- page specific plugin scripts -->
+    <script src="{{ URL::asset('assets/js/admin/data-to-form.js') }}"></script>
+
     <!-- inline scripts related to this page -->
     <script>
-        $('.album-edit-form').on('click', function () {
-            var albumId = $(this).attr('data-album-id');
-            var title = $(this).attr('data-title');
-            var description = $(this).attr('data-description');
-
-
-            $("#album-edit-form-album-id").attr('value', albumId);
-            if(title !== false){
-                $("#album-edit-form-title").attr('value', title);
-            }
-            if(description !== false){
-                $("#album-edit-form-description").val(description);
-            }else{
-                $("#album-edit-form-description").val('');
-            }
-
-            $('#album-edit-modal-form').modal('show')
+        $(".album-edit-form").dataToForm({
+            callback: function(){ $("#album-edit-modal-form").modal("show"); }
         });
+
+        $("#new-album").bind("click", function(){
+            $('#album-new-modal-form').modal("show");
+        })
 
         $("#bootbox-confirm").on(ace.click_event, function() {
             bootbox.confirm("Are you sure?", function(result) {

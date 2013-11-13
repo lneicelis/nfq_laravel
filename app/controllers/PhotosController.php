@@ -229,4 +229,47 @@ class PhotosController extends \BaseController {
 
         return Redirect::back()->with(array('gritter' => $gritter));
     }
+
+    public function postRotate($direction)
+    {
+        $rotate = ($direction === "left") ? 270 : 90;
+
+        $photo = Photo::find(Input::get('id'));
+
+        if(!empty($photo->id))
+        {
+            if(Gallery::rotate($photo->file_name, $photo->file_name, $rotate))
+            {
+                $gritter = array(
+                    'type' => 'success',
+                    'title' => 'Success',
+                    'message' => 'Photo successfully rotated.');
+
+                return Response::json($gritter, 200);
+            }
+        }
+        return Response::json(404);
+    }
+
+    public function postStatus()
+    {
+        $photo = Photo::find(Input::get('id'));
+
+        if(!empty($photo->id))
+        {
+            $status = ($photo->status === 1) ? 0 : 1;
+
+            $photo->status = $status;
+
+            $photo->save();
+
+            $gritter = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Photo status successfully changed.');
+
+            return Response::json($gritter, 200);
+        }
+        return Response::json(404);
+    }
 }

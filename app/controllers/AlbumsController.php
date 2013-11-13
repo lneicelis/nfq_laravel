@@ -33,26 +33,12 @@ class AlbumsController extends \BaseController {
             'default_cover' => $default_cover));
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-    public function getNewAlbum()
-    {
-        Breadcrumbs::addCrumb('Create an album', URL::action('AlbumsController@getNewAlbum'));
 
-        return View::make('admin.albums.new-album', array());
-    }
-
-	public function postNewAlbum()
+	public function postCreate()
 	{
-        $title = Input::get('title');
 
         $validator = Validator::make(
-            array(
-                'title' => $title
-            ),
+            Input::get(),
             array(
                 'title' => 'required',
             ),
@@ -61,43 +47,29 @@ class AlbumsController extends \BaseController {
             )
         );
 
-        if(!empty($title))
+        if(!$validator->fails())
         {
-            if($validator->fails())
-            {
-                $msg = $validator->messages();
+            $user_id = Sentry::getUser()->id;
 
-                $alerts[] = array(
-                    'type' => 'danger',
-                    'title' => 'Error',
-                    'message' => 'There was a problem, the album was not created. Please try again.');
-            }
-            else
-            {
-                $user_id = Sentry::getUser()->id;
+            Album::create(array(
+                'user_id' => $user_id,
+                'title' => Input::get('title'),
+                'description' => Input::get('description')
+            ));
 
-                Album::create(array(
-                    'user_id' => $user_id,
-                    'title' => $title
-                ));
+            $gritter = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'The album was successfully created.');
 
-                $alerts[] = array(
-                    'type' => 'success',
-                    'title' => 'Success',
-                    'message' => 'The album was successfully created.');
-            }
         }else{
-            $alerts[] = array(
-                'type' => 'info',
-                'title' => 'Info',
-                'message' => 'Please enter the new album title.');
+            $gritter = array(
+                'type' => 'error',
+                'title' => 'Error',
+                'message' =>  $validator->messages()->first());
         }
 
-        $this->crumbAdd('#', 'Create an album');
-
-        return View::make('admin.albums.new-album', array(
-            'crumb' => $this->crumbGet(),
-            'alerts' => $alerts));
+        return Redirect::back()->with(array('gritter' => $gritter));
 	}
 
 	public function postSetCover()
@@ -118,8 +90,9 @@ class AlbumsController extends \BaseController {
                 'type' => 'success',
                 'title' => 'Success',
                 'message' => 'Cover photo have been changed.');
+            return Response::json($gritter, 200);
         }
-        return Response::json($gritter, 200);
+        return Response::json(404);
 	}
 
 	public function show($id)

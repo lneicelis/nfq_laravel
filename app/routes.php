@@ -2,9 +2,7 @@
 
 Route::post('test',array(
     'before' => 'csrf',
-    function(){
-    return Response::json(array('a' => Input::get('id')), 200);
-}));
+    function(){}));
 
 
 /**
@@ -47,18 +45,14 @@ Route::get('/', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@index'));
 
-Route::get('gallery/new-album', array(
-    'before' => 'auth',
-    'uses' => 'AlbumsController@getNewAlbum'
-));
-Route::post('gallery/new-album', array(
-    'before' => 'auth|csrf',
-    'uses' => 'AlbumsController@postNewAlbum'
-));
-
 /**
  * Albums routes
  */
+
+Route::post('gallery/new-album', array(
+    'before' => 'auth|csrf',
+    'uses' => 'AlbumsController@postCreate'));
+
 Route::get('album/{id}', array(
     'as' => 'album',
     'uses' => 'AlbumsController@show'));
@@ -106,3 +100,11 @@ Route::post('photo/get-all', array(
 Route::post('photo/crop', array(
     'before' => 'auth',
     'uses' => 'PhotosController@postCrop'));
+
+Route::post('photo/rotate/{direction}', array(
+    'before' => 'auth|csrf',
+    'uses' => 'PhotosController@postRotate'));
+
+Route::post('photo/status', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@postStatus'));

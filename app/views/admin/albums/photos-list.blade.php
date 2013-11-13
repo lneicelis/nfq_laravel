@@ -4,6 +4,7 @@
     @parent
     <link rel="stylesheet" href="{{ URL::asset('assets/css/chosen.css') }}" />
     <link rel="stylesheet" href="{{ URL::asset('assets/css/jquery.Jcrop.min.css') }}" />
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/photo-tagger.css') }}" />
 @endsection
 
 @section('page-header')
@@ -61,7 +62,7 @@
 
         <li class="med-photo-thumb" data-photo-id="{{ $photo->id }}">
             <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" title="{{ $photo->description }}" data-rel="colorbox">
-                <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" />
+                <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" data-rotate-current="0" />
 
             </a>
 
@@ -79,7 +80,23 @@
                     <i class="icon-crop" title="Crop photo"></i>
                 </a>
 
-                <a href="{{ URL::action('PhotosController@destroy') }}" class="ajax" data-id="{{ $photo->id }}"  data-action="delete-photo" title="Delete photo">
+                <a href="{{ URL::action('PhotosController@postStatus') }}" class="ajax" data-id="{{ $photo->id }}" data-after="change-visibility">
+                    @if($photo->status === 0)
+                        <i class="icon-eye-open" title="Make this photo visible"></i>
+                    @else
+                        <i class="icon-eye-close" title="Make this photo invisible"></i>
+                    @endif
+                </a>
+
+                <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'right')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-right">
+                    <i class="icon-rotate-right" title="Rotate photo 90"></i>
+                </a>
+
+                <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'left')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-left">
+                    <i class="icon-rotate-left" title="Rotate photo -90"></i>
+                </a>
+
+                <a href="{{ URL::action('PhotosController@destroy') }}" class="ajax" data-id="{{ $photo->id }}"  data-after="delete-photo" title="Delete photo">
                     <i class="icon-remove red"></i>
                 </a>
             </div>
@@ -88,8 +105,9 @@
     @endforeach
     </ul>
 
-    @include('admin.modals.photo-list-edit-modal')
-    @include('admin.modals.photo-list-crop-modal')
+    @include('admin.modals.photo-edit-modal')
+    @include('admin.modals.photo-crop-modal')
+    @include('admin.modals.photo-tag-modal')
 
 @stop
 
@@ -102,7 +120,10 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="{{ URL::asset('assets/js/chosen.jquery.min.js') }}"></script>
     <script src="{{ URL::asset('assets/js/jquery.Jcrop.min.js') }}"></script>
-
+    <script src="{{ URL::asset('assets/js/jquery.rotate.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/crop.custom.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/photo.transfer.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/data-to-form.js') }}"></script>
     <!-- inline scripts related to this page -->
 
     <script type="text/javascript">
@@ -111,57 +132,6 @@
         var $thumbsUrl = "{{ URL::asset('gallery/thumbs') }}";
 
         jQuery(function ($) {
-
-            var jcrop_api;
-            var cropContainer = "#photo-crop-container";
-            var cropObject = "#photo-crop";
-
-            function setCoords(c)
-            {
-                $('#x').val(c.x);
-                $('#y').val(c.y);
-                $('#w').val(c.w);
-                $('#h').val(c.h);
-            }
-
-            function flush_jcrop() {
-
-                if(jcrop_api){
-                    $(cropContainer).empty();
-                    jcrop_api.destroy();
-                }
-
-            }
-
-            $(".photo-crop-form").click(function(event){
-                event.preventDefault();
-                flush_jcrop();
-
-                var cropSrc = $(this).attr('href');
-                var cropid = $(this).attr('data-photo-id');
-
-                $("#photo-id").attr("value", cropid);
-                $(cropContainer).append("<img id=\"photo-crop\" class=\"crop-photo\" src=" + cropSrc + " />");
-
-                $("#photo-crop").Jcrop({
-                    onChange:   setCoords,
-                    onSelect:   setCoords
-                },function(){
-                    jcrop_api = this;
-                });
-
-                $('#photo-crop-modal-form').modal('show');
-
-            });
-        });
-
-        jQuery(function ($) {
-            $("#transfer").click(function(event){
-                event.preventDefault();
-                $(".transfer-div").toggle("fast");
-                $(".chosen-select").chosen();
-            })
-
             var colorbox_params = {
                 reposition: true,
                 scalePhotos: true,
@@ -185,6 +155,10 @@
 
             $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
             $("#cboxLoadingGraphic").append("<i class='icon-spinner orange'></i>");//let's add a custom loading icon
+
+            $('.photo-edit-form').dataToForm({
+                callback: function(){ $("#photo-edit-modal-form").modal('show'); }
+            });
 
         });
     </script>

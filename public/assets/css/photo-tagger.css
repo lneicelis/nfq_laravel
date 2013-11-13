@@ -1,0 +1,13 @@
+.photo-tag-container{
+    position: relative;
+    margin: 0 auto;
+    padding: 0 0;
+    width: auto;
+    height: auto;
+    display: inline-block;
+    cursor:crosshair;
+}
+
+.photo-tag{
+    position: absolute;
+}

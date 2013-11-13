@@ -17,9 +17,10 @@
                             <div class="form-group">
                                 <label for="form-field-username">Photo information</label>
                                 <div>
-                                    <input id="photo-edit-form-album-id" name="photo_id" value="" type="hidden" />
+                                    {{ Form::token() }}
+                                    <input id="form-photo-id" name="photo_id" value="" type="hidden" />
 
-                                    <textarea id="photo-edit-form-description" name="description" class="form-control limited" maxlength="250" placeholder="Description"></textarea>
+                                    <textarea id="form-photo-description" name="description" class="form-control limited" maxlength="250" placeholder="Description"></textarea>
                                 </div>
                             </div>
                         </div>

@@ -95,4 +95,26 @@ class Gallery {
             return FALSE;
         }
     }
+
+    public function rotate($open_name, $save_name, $rotate)
+    {
+        $imagine = new \Imagine\Gd\Imagine();
+
+        $open = public_path($this->photo_path . $open_name);
+
+        $save = public_path($this->photo_path . $save_name);
+
+        try{
+            $imagine->open($open)
+                ->rotate($rotate)
+                ->save($save);
+
+            $this->thumbnail($save, $save_name);
+
+            return TRUE;
+        }
+        catch(\Imagine\Exception\Exception $e){
+            return FALSE;
+        }
+    }
 } 

@@ -1,5 +1,3 @@
-<!-- basic scripts -->
-
 <!--[if !IE]> -->
 
 <script type="text/javascript">
@@ -10,7 +8,7 @@
 
 <!--[if IE]>
 <script type="text/javascript">
-    window.jQuery || document.write("<script src='{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}'>"+"<"+"/script>");
+    window.jQuery || document.write("<script src=\"{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}\"></script>");
 </script>
 <![endif]-->
 
@@ -22,3 +20,6 @@
 
 <script src="{{ URL::asset('assets/js/ace-elements.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/ace.min.js') }}"></script>
+
+<!-- basic scripts -->
+<script src="{{ URL::asset('assets/js/custom.js') }}"></script>

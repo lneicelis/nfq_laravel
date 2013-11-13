@@ -11,13 +11,15 @@
                     <div id="photo-crop-container" class="row">
 
                     </div>
+
+                    <input type="hidden" size="4" id="photo-id" name="photo-id" />
+                    <input type="hidden" size="4" id="x" name="x" />
+                    <input type="hidden" size="4" id="y" name="y" />
+                    <input type="hidden" size="4" id="w" name="w" />
+                    <input type="hidden" size="4" id="h" name="h" />
                 </div>
 
-                <input type="hidden" size="4" id="photo-id" name="photo-id" />
-                <input type="hidden" size="4" id="x" name="x" />
-                <input type="hidden" size="4" id="y" name="y" />
-                <input type="hidden" size="4" id="w" name="w" />
-                <input type="hidden" size="4" id="h" name="h" />
+
 
                 <div class="modal-footer">
                     <button class="btn btn-sm crop-modal-hide" data-dismiss="modal">
