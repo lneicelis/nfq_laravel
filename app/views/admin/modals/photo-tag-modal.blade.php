@@ -1,62 +1,62 @@
 <div id="photo-tag-modal-form" class="modal" tabindex="-1">
     <div class="modal-crop-form">
-        <form method="post" action="{{ URL::action('PhotosController@postCrop') }}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="blue bigger">Photo crop</h4>
-                </div>
 
-                <div class="modal-body overflow-visible">
-                    <div id="photo-crop-container" class="photo-tag-container">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="blue bigger">Photo tag</h4>
+            </div>
 
-                        <div id="photo-tag-form" class="col-sm-4" style="display:none; position: absolute">
+            <div class="modal-body overflow-visible">
+                <div class="photo-tag-container">
+
+                    <img id="photo-to-tag" src="" magger-photo-id="" />
+
+
+                        <div class="magger-form-container">
                             <div class="widget-box">
                                 <div class="widget-header">
                                     <h4>
-                                        <i class="icon-tint"></i>
+                                        <i class="icon-tag"></i>
                                         Tagger
                                     </h4>
                                 </div>
-
                                 <div class="widget-body">
                                     <div class="widget-main">
-                                        <div class="row-fluid">
-                                            <label for="colorpicker1">Color Picker</label>
-                                        </div>
+                                        <form id="magger-form" method="post">
+                                            <div class="control-group">
+                                                <div class="bootstrap-colorpicker">
+                                                    <label for="tag-title">Title</label>
+                                                    <input id="tag-title" name="tag-title" type="text" class="input-xlarge">
+                                                </div>
+                                                <div>
+                                                    <label for="tag-description">Description</label>
 
-                                        <div class="control-group">
-                                            <div class="bootstrap-colorpicker">
-                                                <input id="tag" type="text" class="input-medium">
+                                                    <textarea id="tag-description" name="tag-description" class="form-control limited" maxlength="250"></textarea>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label for="description">Description</label>
-
-                                                <textarea class="form-control limited" id="description" maxlength="250"></textarea>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-xs btn-danger magger-form-delete">
+                                                    <i class="icon-trash"></i>
+                                                    Delete
+                                                </button>
+                                                <button type="button" class="btn btn-xs magger-form-close">
+                                                    <i class="icon-remove"></i>
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-xs btn-primary">
+                                                    <i class="icon-ok"></i>
+                                                    Save
+                                                </button>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <input type="hidden" size="4" id="photo-id" name="photo-id" />
-                    <input type="hidden" size="4" id="x" name="x" />
-                    <input type="hidden" size="4" id="y" name="y" />
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-sm crop-modal-hide" data-dismiss="modal">
-                        <i class="icon-remove"></i>
-                        Cancel
-                    </button>
-
-                    <button type="button" class="btn btn-sm btn-primary">
-                        <i class="icon-ok"></i>
-                        Crop
-                    </button>
                 </div>
             </div>
-        </form>
+        </div>
+
     </div>
 </div>

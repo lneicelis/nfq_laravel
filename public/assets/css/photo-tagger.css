@@ -6,8 +6,34 @@
     height: auto;
     display: inline-block;
     cursor:crosshair;
+    z-index: 1000;
+}
+.magger-tag{
+    position: absolute;
+    width: 2px;
+    margin-left: -1px;
+    cursor: pointer;
+    z-index: 50;
 }
 
-.photo-tag{
+.tag-holder{
     position: absolute;
+    width: 2px;
+    bottom: 0px;
+}
+
+.tag-holder > i{
+    margin: auto auto;
+    display: table;
+}
+
+.magger-form-container{
+    cursor: move;
+    position: absolute!important;
+    display: none;
+    width: 270px;
+}
+
+#magger-form > .modal-footer {
+    padding: 10px 8px;
 }

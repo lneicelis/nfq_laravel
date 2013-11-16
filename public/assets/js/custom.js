@@ -39,9 +39,11 @@
             if(after == "change-visibility")
             {
                 if($(obj).children().attr('class') == "icon-eye-open"){
-                    $(obj).children().switchClass("icon-eye-open", "icon-eye-close");
+                    $(obj).children().switchClass("icon-eye-open", "icon-eye-close").attr("title", "Make this photo invisible");
+                    $(obj).parent().parent().find("img").css({opacity: "1"});
                 }else{
                     $(obj).children().switchClass("icon-eye-close", "icon-eye-open");
+                    $(obj).parent().parent().find("img").css({opacity: "0.6"}).attr("title", "Make this photo visible");;
                 }
             }
             if(after == "rotate-right"){

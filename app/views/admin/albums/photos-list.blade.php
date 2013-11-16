@@ -62,7 +62,7 @@
 
         <li class="med-photo-thumb" data-photo-id="{{ $photo->id }}">
             <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" title="{{ $photo->description }}" data-rel="colorbox">
-                <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" data-rotate-current="0" />
+                <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" data-photo-id="{{ $photo->id }}" data-rotate-current="0" />
 
             </a>
 
@@ -78,6 +78,10 @@
 
                 <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" class="photo-crop-form" data-photo-id="{{ $photo->id }}">
                     <i class="icon-crop" title="Crop photo"></i>
+                </a>
+
+                <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" class="photo-tag-form" data-photo-id="{{ $photo->id }}">
+                    <i class="icon-tags" title="Tag photo"></i>
                 </a>
 
                 <a href="{{ URL::action('PhotosController@postStatus') }}" class="ajax" data-id="{{ $photo->id }}" data-after="change-visibility">
@@ -124,6 +128,8 @@
     <script src="{{ URL::asset('assets/js/admin/crop.custom.js') }}"></script>
     <script src="{{ URL::asset('assets/js/admin/photo.transfer.js') }}"></script>
     <script src="{{ URL::asset('assets/js/admin/data-to-form.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/photo-tag-widget.js') }}"></script>
+
     <!-- inline scripts related to this page -->
 
     <script type="text/javascript">
@@ -158,6 +164,33 @@
 
             $('.photo-edit-form').dataToForm({
                 callback: function(){ $("#photo-edit-modal-form").modal('show'); }
+            });
+
+
+            $(".photo-tag-form").click(function(event){
+                event.preventDefault();
+                $(".loader-container").show();
+                var tagSrc = $(this).attr('href');
+                var tagPhotoId = $(this).attr('data-photo-id');
+                $("#photo-to-tag").attr("src", tagSrc);
+                $("#photo-to-tag").attr("magger-photo-id", tagPhotoId);
+
+                $('#photo-tag-modal-form').modal('show');
+
+                $("#photo-to-tag").magger({
+                    formCreateUrl: "{{ URL::action('PhotoTagsController@postCreate') }}",
+                    formEditUrl: "{{ URL::action('PhotoTagsController@postEdit') }}",
+                    getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}",
+                    formDeleteUrl: "{{ URL::action('PhotoTagsController@postDelete') }}"
+                });
+                $(".loader-container").hide();
+                 /*
+                $("#photo-to-tag").maggerShow({
+                    getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}"
+                });
+                */
+
+
             });
 
         });

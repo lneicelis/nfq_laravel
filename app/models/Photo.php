@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Luko
- * Date: 13.10.25
- * Time: 10.55
- */
 
 class photo extends Eloquent {
 

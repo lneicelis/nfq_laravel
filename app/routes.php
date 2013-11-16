@@ -54,7 +54,7 @@ Route::post('gallery/new-album', array(
     'uses' => 'AlbumsController@postCreate'));
 
 Route::get('album/{id}', array(
-    'as' => 'album',
+    'before' => 'auth',
     'uses' => 'AlbumsController@show'));
 
 Route::post('album/set_cover', array(
@@ -108,3 +108,19 @@ Route::post('photo/rotate/{direction}', array(
 Route::post('photo/status', array(
     'before' => 'auth',
     'uses' => 'PhotosController@postStatus'));
+
+/**
+ * Photo tags routes
+ */
+Route::post('photo-tag/get', array(
+    'before' => 'auth',
+    'uses' => 'PhotoTagsController@postGet'));
+Route::post('photo-tag/add', array(
+    'before' => 'auth',
+    'uses' => 'PhotoTagsController@postCreate'));
+Route::post('photo-tag/edit', array(
+    'before' => 'auth',
+    'uses' => 'PhotoTagsController@postEdit'));
+Route::post('photo-tag/delete', array(
+    'before' => 'auth',
+    'uses' => 'PhotoTagsController@postDelete'));

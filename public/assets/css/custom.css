@@ -33,3 +33,33 @@ li.active-result{
     margin-left: auto;
     margin-right: auto;
 }
+
+.loader-container{
+    display: none;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    cursor: progress;
+
+}
+.loader-curtain{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    opacity: 0.4;
+}
+.loader{
+    position: fixed;
+    top:45%;
+    left:45%;
+    opacity: 1;
+}
+.bigger-500{
+    font-size: 500%;
+}

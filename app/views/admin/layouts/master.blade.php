@@ -29,6 +29,13 @@
 </head>
 
 <body>
+    <div class="loader-container">
+        <div class="loader-curtain"></div>
+        <div class="loader">
+            <i class="icon-spinner icon-spin orange bigger-500"></i>
+        </div>
+    </div>
+
     <div class="navbar navbar-default" id="navbar">
 
 		<div class="navbar-container" id="navbar-container">
@@ -109,6 +116,11 @@
 						@yield('content')	
 							
 					</div>
+                    <div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
 
                 </div><!-- /.page-content -->
             </div><!-- /.main-content -->

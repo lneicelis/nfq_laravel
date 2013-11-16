@@ -17,7 +17,7 @@ class Photos extends Migration {
             $table->integer('album_id');
             $table->string('file_name', 22);;
             $table->string('description', 255)->nullable();
-            $table->integer('status')->default('1');
+            $table->integer('status')->default(1);
             $table->timestamp('shoot_date')->nullable();
             $table->timestamps();
         });
