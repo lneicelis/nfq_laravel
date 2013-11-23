@@ -10,6 +10,7 @@
 
     <form action="{{ URL::action('PhotosController@postUpload', array('album_id' => $album_id)) }}" method="post" enctype="multipart/form-data" id="userfile" class="dropzone">
         <div class="fallback">
+            <input type="hidden" name="token" value="{{ csrf_token() }}">
             <input name="file" type="file" multiple="" />
             <button>Upload</button>
         </div>

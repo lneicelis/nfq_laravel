@@ -1,16 +1,12 @@
-
 <!-- basic styles -->
 
-<link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+<link rel="stylesheet" href="{{ URL::asset('assets/css/jquery.gritter.css') }}" />
+<link rel="stylesheet" href="{{ URL::asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
 <link rel="stylesheet" href="{{ URL::asset('assets/css/font-awesome.min.css') }}" />
 
 <!--[if IE 7]>
 <link rel="stylesheet" href="{{ URL::to('/') }}/assets/css/font-awesome-ie7.min.css" />
 <![endif]-->
-
-<!-- page specific plugin styles -->
-
-<link rel="stylesheet" href="{{ URL::asset('assets/css/colorbox.css') }}" />
 
 <!-- fonts -->
 

@@ -57,4 +57,15 @@
 
         }
     });
+
+    /*
+     * making meniu active
+     */
+    var menuLinks = $(".nav-list > li> a");
+    $.each(menuLinks, function(){
+        var urlRegex = new RegExp($(this).attr("href") + ".*","i");
+        if(document.URL.match(urlRegex) != null){
+            $(this).parent().addClass("active");
+        }
+    });
 })(jQuery);

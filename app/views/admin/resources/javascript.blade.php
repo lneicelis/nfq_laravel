@@ -12,4 +12,5 @@
 
 <script>
     var token = "{{ csrf_token() }}";
+    var $path_base = "{{ URL::asset('/') }}";
 </script>

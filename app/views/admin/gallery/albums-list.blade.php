@@ -20,8 +20,17 @@
                 @endif
 
                 <div class="tags">
+
                         <span class="label-holder">
-                            <span class="label label-info">{{ $album->title }}</span>
+                            <span class="label label-warning arrowed"><b>{{ $album->title }}</b></span>
+                        </span>
+
+                        <span class="label-holder">
+                            <span class="label label-danger">{{ $album->no_photos }} photos</span>
+                        </span>
+
+                        <span class="label-holder">
+                            <span class="label label-info">comments</span>
                         </span>
                 </div>
             </a>
@@ -31,7 +40,7 @@
                     <i class="icon-pencil"></i>
                 </a>
 
-                <a href="{{ URL::to('album/destroy/' . $album->id) }}" title="Delete the album">
+                <a href="{{ URL::action('AlbumsController@destroy', array('album_id' => $album->id)) }}" title="Delete the album">
                     <i class="icon-remove red"></i>
                 </a>
             </div>
@@ -40,8 +49,8 @@
         @endforeach
     </ul>
 
-    @include('admin.modals.album-new-modal')
-    @include('admin.modals.album-edit-modal')
+    @include('admin.gallery.modals.album-new-modal')
+    @include('admin.gallery.modals.album-edit-modal')
 
 @stop
 
@@ -52,24 +61,26 @@
 
     <!-- inline scripts related to this page -->
     <script>
-        $(".album-edit-form").dataToForm({
-            callback: function(){ $("#album-edit-modal-form").modal("show"); }
-        });
-
-        $("#new-album").bind("click", function(){
-            $('#album-new-modal-form').modal("show");
-        })
-
-        $("#bootbox-confirm").on(ace.click_event, function() {
-            bootbox.confirm("Are you sure?", function(result) {
-                if(result) {
-                    return true;
-                }else{
-                    return false;
-                }
+        (function($){
+            $(".album-edit-form").dataToForm({
+                callback: function(){ $("#album-edit-modal-form").modal("show"); }
             });
-        });
 
+            $("#new-album").bind("click", function(){
+                $('#album-new-modal-form').modal("show");
+            });
+
+            $("#bootbox-confirm").on(ace.click_event, function() {
+                bootbox.confirm("Are you sure?", function(result) {
+                    if(result) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+                });
+            });
+            $.albumCommentsUrl = "{{ URL::action('AlbumsController@postComment') }}";
+        })(jQuery)
     </script>
 
 @stop

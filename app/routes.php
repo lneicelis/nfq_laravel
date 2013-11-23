@@ -1,10 +1,5 @@
 <?php
 
-Route::post('test',array(
-    'before' => 'csrf',
-    function(){}));
-
-
 /**
  * Users authentification routes
  */
@@ -33,15 +28,27 @@ Route::get('/user/change_password/{reset_code}', array(
 Route::post('/user/change_password/{reset_code}', array(
     'uses' => 'UsersController@postChangePassword'));
 
+Route::get('/user/all', array(
+    'before' => 'auth',
+    'uses' => 'UsersController@getUsers'));
+Route::post('/user/edit', array(
+    'before' => 'auth',
+    'uses' => 'UsersController@postUserEdit'));
+
 Route::get('/user/profile', array(
     'before' => 'auth',
     'uses' => 'UsersController@getProfile'));
 
 /**
+ * Dashboard Routes
+ */
+Route::get('/dashboard', array(
+    'before' => 'auth',
+    'uses' => 'DashboardController@getIndex'));
+/**
  * Gallery albums routes
  */
-Route::get('/', array(
-    'as' => 'gallery',
+Route::get('/album', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@index'));
 
@@ -69,19 +76,27 @@ Route::get('album/destroy/{album_id}', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@destroy'));
 
+Route::post('album/comment', array(
+    'before' => '',
+    'uses' => 'AlbumsController@postComment'));
+
+Route::post('album/like', array(
+    'before' => '',
+    'uses' => 'AlbumsController@postLike'));
+
 /**
  * Photos routes
  */
 
-Route::get('/upload/{album_id}', array(
+Route::get('/album/{album_id}/upload', array(
     'before' => 'auth',
     'uses' => 'PhotosController@getUpload'));
 
-Route::post('/upload/{album_id}', array(
+Route::post('/album/{album_id}/upload', array(
     'before' => 'auth',
     'uses' => 'PhotosController@postUpload'));
 
-Route::post('photo/destory', array(
+Route::post('photo/destory/{photo_id}', array(
     'before' => 'auth|csrf',
     'uses' => 'PhotosController@destroy'));
 
@@ -124,3 +139,7 @@ Route::post('photo-tag/edit', array(
 Route::post('photo-tag/delete', array(
     'before' => 'auth',
     'uses' => 'PhotoTagsController@postDelete'));
+
+Route::get('test/{album_id}/{user_id}', array(
+    'uses' => 'PhotosController@canEdit'
+));

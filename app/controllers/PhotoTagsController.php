@@ -6,7 +6,7 @@ class PhotoTagsController extends \BaseController {
         if(Input::has('photo_id'))
         {
             $tags = PhotoTag::where('photo_id', '=',Input::get('photo_id'))
-                ->get(array('id as tag-id', 'title as tag-title', 'description as tag-description','url', 'x', 'y'));
+                ->get(array('id as tag-id', 'title as tag-title', 'description as tag-description', 'color as tag-color', 'size as tag-size', 'url', 'x', 'y'));
 
             return Response::json($tags, 200);
         }
@@ -31,9 +31,14 @@ class PhotoTagsController extends \BaseController {
             $photo_tag->photo_id = $tag['photo-id'];
             $photo_tag->title = $tag['tag-title'];
             $photo_tag->description = $tag['tag-description'];
+            $photo_tag->url = $tag['tag-url'];
+            $photo_tag->color = $tag['tag-color'];
+            $photo_tag->size = $tag['tag-size'];
             $photo_tag->x = $tag['x'];
             $photo_tag->y = $tag['y'];
             $photo_tag->save();
+
+            $photo_tag->photo->increment('no_tags');
 
             $tag['tag-id'] = $photo_tag->id;
 
@@ -65,6 +70,9 @@ class PhotoTagsController extends \BaseController {
             $photo_tag->photo_id = $tag['photo-id'];
             $photo_tag->title = $tag['tag-title'];
             $photo_tag->description = $tag['tag-description'];
+            $photo_tag->url = $tag['tag-url'];
+            $photo_tag->color = $tag['tag-color'];
+            $photo_tag->size = $tag['tag-size'];
             $photo_tag->x = $tag['x'];
             $photo_tag->y = $tag['y'];
             $photo_tag->save();
@@ -81,6 +89,8 @@ class PhotoTagsController extends \BaseController {
         $tag = PhotoTag::find(Input::get('tag-id'));
 
         $affected_rows = $tag->delete();
+
+        $tag->photo->decrement('no_tags');
 
         if($affected_rows){
             return Response::json("Tag was successfully deleted.", 200);

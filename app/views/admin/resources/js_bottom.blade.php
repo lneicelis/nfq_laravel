@@ -23,3 +23,6 @@
 
 <!-- basic scripts -->
 <script src="{{ URL::asset('assets/js/custom.js') }}"></script>
+<script src="{{ URL::asset('assets/js/jquery.gritter.min.js') }}"></script>
+<script src="{{ URL::asset('assets/js/admin/gritter.custom.js') }}"></script>
+<script src="{{ URL::asset('assets/js/admin/fb-events.js') }}"></script>

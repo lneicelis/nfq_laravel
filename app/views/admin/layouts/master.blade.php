@@ -98,7 +98,9 @@
                 <span class="menu-text"></span>
             </a>
 
-            <div class="main-content" style="margin-left: 0px;">
+            @include('admin.components.sidebar')
+
+            <div class="main-content">
                 <div class="breadcrumbs" id="breadcrumbs">
                     {{ Breadcrumbs::render() }}
                 </div>
@@ -116,11 +118,6 @@
 						@yield('content')	
 							
 					</div>
-                    <div>
-                        <div>
-                            <div></div>
-                        </div>
-                    </div>
 
                 </div><!-- /.page-content -->
             </div><!-- /.main-content -->
@@ -131,11 +128,12 @@
             <i class="icon-double-angle-up icon-only bigger-110"></i>
         </a>
     </div><!-- /.main-container -->
+    <div id="fb-root"></div>
 
     @include('admin.resources.js_bottom')
-    @include('admin.resources.gritter')
-
 	@yield('scripts')
+
+    @include('admin.resources.gritter')
 
 </body>
 </html>

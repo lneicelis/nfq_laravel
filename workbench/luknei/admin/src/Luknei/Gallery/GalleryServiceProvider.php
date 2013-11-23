@@ -17,7 +17,7 @@ class GalleryServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register()
-	{
+    {
         $this->app['gallery'] = $this->app->share(function($app)
         {
             return new Gallery;

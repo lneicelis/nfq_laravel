@@ -12,11 +12,10 @@ class AlbumsController extends \BaseController {
         $user = Sentry::getUser();
         $default_cover = 'default.jpg';
 
-
         $albums = DB::table('albums')
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
             ->where('albums.user_id', '=', $user->id)
-            ->select('albums.id', 'albums.title', 'albums.description', 'photos.file_name')
+            ->select('albums.id', 'albums.title', 'albums.description', 'albums.no_photos', 'photos.file_name')
             ->get();
 
         if(empty($albums))
@@ -27,7 +26,7 @@ class AlbumsController extends \BaseController {
                 'message' => 'You do not have any albums yet.');
         }
 
-        return View::make('admin.albums.albums-list', array(
+        return View::make('admin.gallery.albums-list', array(
             'alerts' => @$alerts,
             'albums' => $albums,
             'default_cover' => $default_cover));
@@ -57,13 +56,13 @@ class AlbumsController extends \BaseController {
                 'description' => Input::get('description')
             ));
 
-            $gritter = array(
+            $gritter[] = array(
                 'type' => 'success',
                 'title' => 'Success',
                 'message' => 'The album was successfully created.');
 
         }else{
-            $gritter = array(
+            $gritter[] = array(
                 'type' => 'error',
                 'title' => 'Error',
                 'message' =>  $validator->messages()->first());
@@ -115,7 +114,7 @@ class AlbumsController extends \BaseController {
 
         Breadcrumbs::addCrumb($album->title . ' album');
 
-        return View::make('admin.albums.photos-list', array(
+        return View::make('admin.gallery.photos-list', array(
             'alerts' => @$alerts,
             'album' => $album,
             'albums' => $albums,
@@ -176,15 +175,13 @@ class AlbumsController extends \BaseController {
 
         $photos = $album->photos;
 
+
         if(!empty($photos))
         {
+            $photos_controller = new \PhotosController();
             foreach($photos as $photo)
             {
-                @unlink(public_path('gallery/images/') . $photo->file_name);
-                @unlink(public_path('gallery/thumbs/') . $photo->file_name);
-
-                Photo::destroy($photo->id);
-
+                $photos_controller->destroy($photo->id);
             }
         }
 
@@ -193,4 +190,45 @@ class AlbumsController extends \BaseController {
         return Redirect::back();
 	}
 
+    public function postComment()
+    {
+        die(var_dump(Input::get()));
+        $validator = Validator::make(
+            Input::get(),
+            array(
+                'action' => 'required',
+                'd' => 'required|integer'
+            )
+        );
+        if(!$validator->fails())
+        {
+            $album = Album::find(Input::get('id'));
+
+            if(Input::get('action') == 'increment')
+                $album->increment('no_comments');
+            if(Input::get('action') == 'decrement')
+                $album->decrement('no_comments');
+        }
+    }
+
+    public function postLike()
+    {
+
+        $validator = Validator::make(
+            Input::get(),
+            array(
+                'action' => 'required',
+                'id' => 'required|integer'
+            )
+        );
+        if(!$validator->fails())
+        {
+            $album = Album::find(Input::get('id'));
+
+            if(Input::get('action') == 'increment')
+                $album->increment('no_likes');
+            if(Input::get('action') == 'decrement')
+                $album->decrement('no_likes');
+        }
+    }
 }

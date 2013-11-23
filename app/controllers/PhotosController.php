@@ -2,6 +2,17 @@
 
 class PhotosController extends \BaseController {
 
+    private  function canEdit($album_id)
+    {
+        $user_id = Sentry::getUser()->id;
+        $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->count();
+        if($album === 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function getUpload($album_id)
     {
         $album = Album::find($album_id);
@@ -11,18 +22,15 @@ class PhotosController extends \BaseController {
         Breadcrumbs::addCrumb($album->title . ' album', URL::action('AlbumsController@show', array('id' => $album_id)));
         Breadcrumbs::addCrumb('Upload photos');
 
-        return View::make('admin.albums.photos-upload-form', array(
+        return View::make('admin.gallery.photos-upload-form', array(
             'album_id' => $album_id));
     }
 
     public function postUpload($album_id)
     {
-        $user_id = Sentry::getUser()->id;
-        $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->count();
-
-        if($album === 0)
-        {
-            App::abort(404);
+        if(!$this->canEdit($album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
         }
 
         if (Input::hasFile('file'))
@@ -54,6 +62,8 @@ class PhotosController extends \BaseController {
                         'description' => $file->getClientOriginalName(),
                         'file_name' => $new_file_name));
 
+                    Album::find($album_id)->increment('no_photos');
+
                     $alerts[] = array(
                         'type' => 'success',
                         'title' => 'Success',
@@ -68,7 +78,7 @@ class PhotosController extends \BaseController {
                         'title' => 'Error!',
                         'message' => 'The file was not uploaded, please try again.');
 
-                    return Response::json('error', 400);
+                    return Response::json($alerts, 404);
                 }
             }
         }
@@ -79,71 +89,61 @@ class PhotosController extends \BaseController {
         $photo_id = Input::get('photo_id');
         $description = Input::get('description');
 
-        $user_id = Sentry::getUser()->id;
-        $photo = DB::table('photos')
-            ->leftJoin('albums', 'photos.album_id', '=', 'albums.id')
-            ->whereRaw('albums.user_id = ? AND photos.id = ?', array($user_id, $photo_id))
-            ->first();
-
-        if(!empty($photo))
-        {
-            $validator = Validator::make(
-                array(
-                    'description' => $description,
-                ),
-                array(
-                    'description' => 'max:255'
-                ),
-                array(
-                    'required' => 'Enter description, please.'
-                )
-            );
-            if(!$validator->fails()){
-                $photo = Photo::find($photo_id);
-                $photo->description = $description;
-                $photo->save();
-
-                $gritter[] = array(
-                    'type' => 'success',
-                    'title' => 'Success',
-                    'message' => 'Photo successfully edited.');
-            }else{
-                $gritter[] = array(
-                    'type' => 'error',
-                    'title' => 'Error',
-                    'message' => $validator->messages()->first());
-            }
-
-            return Redirect::back()->with(array('gritter' => $gritter));
+        $photo = Photo::find($photo_id);
+        if(!$this->canEdit($photo->album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
         }
+        $validator = Validator::make(
+            array(
+                'description' => $description,
+            ),
+            array(
+                'description' => 'max:255'
+            ),
+            array(
+                'required' => 'Enter description, please.'
+            )
+        );
+        if(!$validator->fails()){
+            $photo->description = $description;
+            $photo->save();
+
+            $gritter[] = array(
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Photo successfully edited.');
+        }else{
+            $gritter[] = array(
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => $validator->messages()->first());
+        }
+        return Redirect::back()->with(array('gritter' => $gritter));
     }
 
-	public function destroy()
+	public function destroy($photo_id)
 	{
+        $photo = Photo::find($photo_id);
 
-        $user_id = Sentry::getUser()->id;
-        $id = Input::get('id');
-
-        $photo = DB::table('photos')
-            ->select('photos.file_name')
-            ->leftJoin('albums', 'photos.album_id', '=', 'albums.id')
-            ->whereRaw('albums.user_id = ? AND photos.id = ?', array($user_id, $id))
-            ->first();
-
-        if(!empty($photo)){
-
-             unlink(public_path('gallery/images/' . $photo->file_name));
-             unlink(public_path('gallery/thumbs/' . $photo->file_name));
-
-            Photo::destroy($id);
-
-            $gritter = array(
-                'type' => 'success',
-                'title' => 'Message',
-                'message' => 'Photo has been successfully deleted.');
-
-            return Response::json($gritter, 200);
+        if(!$this->canEdit($photo->album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
         }
+
+        unlink(public_path('gallery/images/' . $photo->file_name));
+        unlink(public_path('gallery/thumbs/' . $photo->file_name));
+        Photo::destroy($photo->id);
+        PhotoTag::where('photo_id', '=', $photo->id)->delete();
+        $photo->album->decrement('no_photos');
+
+        $gritter = array(
+            'type' => 'success',
+            'title' => 'Message',
+            'message' => 'Photo has been successfully deleted.');
+
+        return Response::json($gritter, 200);
+
 
 	}
 
@@ -169,7 +169,15 @@ class PhotosController extends \BaseController {
         $album_id = Input::get('album_id');
         $photo_id = Input::get('photo_id');
 
+        if(!$this->canEdit($album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
+        }
+
+        Photo::find($photo_id)->album->decrement('no_photos');
+        Album::find($album_id)->increment('no_photos');
         $affectedRows = Photo::where('id', '=', $photo_id)->update(array('album_id' => $album_id));
+
         if($affectedRows > 0){
             return Response::json(200);
         }else{
@@ -185,6 +193,13 @@ class PhotosController extends \BaseController {
         $w = (integer)Input::get('w');
         $h = (integer)Input::get('h');
 
+        $photo = Photo::find(Input::get('photo-id'));
+
+        if(!$this->canEdit($photo->album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
+        }
+
         $validator = Validator::make(
             Input::get(),
             array(
@@ -197,7 +212,6 @@ class PhotosController extends \BaseController {
 
         if(!$validator->fails())
         {
-            $photo = Photo::find(Input::get('photo-id'));
             if(!empty($photo))
             {
                 $new_file_name = str_random(16) . substr($photo->file_name, 16);
@@ -235,6 +249,10 @@ class PhotosController extends \BaseController {
         $rotate = ($direction === "left") ? 270 : 90;
 
         $photo = Photo::find(Input::get('id'));
+        if(!$this->canEdit($photo->album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
+        }
 
         if(!empty($photo->id))
         {
@@ -254,6 +272,10 @@ class PhotosController extends \BaseController {
     public function postStatus()
     {
         $photo = Photo::find(Input::get('id'));
+        if(!$this->canEdit($photo->album_id)){
+            $error = "You are not authorized to modify this album!";
+            return Response::json($error, 404);
+        }
 
         if(!empty($photo->id))
         {
@@ -271,5 +293,26 @@ class PhotosController extends \BaseController {
             return Response::json($gritter, 200);
         }
         return Response::json(404);
+    }
+
+    public function postComment()
+    {
+
+        $validator = Validator::make(
+            Input::get(),
+            array(
+                'action' => 'required',
+                'photo_id' => 'required|integer'
+            )
+        );
+        if(!$validator->fails())
+        {
+            $photo = Photo::find(Input::get('photo_id'));
+
+            if(Input::get('action') == 'increment')
+                $photo->increment('no_comments');
+            if(Input::get('action') == 'decrement')
+                $photo->decrement('no_comments');
+        }
     }
 }

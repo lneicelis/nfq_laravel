@@ -18,6 +18,8 @@ class PhotoTags extends Migration {
             $table->string('title', 100);
             $table->string('description', 255)->nullable();
             $table->string('url', 255)->nullable();
+            $table->string('color', 15)->nullable();
+            $table->string('size', 10)->nullable();
             $table->string('x', 8);
             $table->string('y', 8);
             $table->timestamps();

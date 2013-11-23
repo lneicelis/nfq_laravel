@@ -12,10 +12,6 @@ li.active-result{
     color: #000000;
 }
 
-.menu-toggler{
-    display: none;
-}
-
 .modal-crop-form {
     margin-right: auto;
     margin-left: auto;
@@ -62,4 +58,31 @@ li.active-result{
 }
 .bigger-500{
     font-size: 500%;
+}
+
+.photo-tag-container > .popover{
+    width:200px;
+    margin-left:-100px;
+    cursor: default;
+}
+.fb-photo-likes{
+    padding-right: 20px;
+    position: absolute!important;
+    top: 10px;
+    right: 0px;
+    max-height: 40px;
+}
+.fb-photo-comments{
+    padding-right: 20px;
+    position: absolute!important;
+    top: 50px;
+    right: 0px;
+    max-height: 520px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.photo-tag-container-wrapper{
+    height: 640px;
+    width: 640px;
+    text-align: center;
 }

@@ -13,8 +13,8 @@ class Gallery {
     protected $thumb_width = 200;
     protected $thumb_height = 200;
 
-    protected $photo_max_width = 800;
-    protected $photo_max_height = 800;
+    protected $photo_max_width = 640;
+    protected $photo_max_height = 640;
 
     protected $thumb_path = 'gallery/thumbs/';
     protected $photo_path = 'gallery/images/';
