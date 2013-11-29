@@ -17,7 +17,21 @@
                     <fieldset>
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
-                                <input name="email" value="{{{ @$email }}}" type="email" class="form-control" placeholder="Email" />
+                                <input name="first_name" value="{{{ @$input['first_name'] }}}" type="text" class="form-control" placeholder="Name" />
+                                <i class="icon-user"></i>
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input name="last_name" value="{{{ @$input['last_name'] }}}" type="text" class="form-control" placeholder="Last name" />
+                                <i class="icon-user"></i>
+                            </span>
+                        </label>
+
+                        <label class="block clearfix">
+                            <span class="block input-icon input-icon-right">
+                                <input name="email" value="{{{ @$input['email'] }}}" type="email" class="form-control" placeholder="Email" />
                                 <i class="icon-envelope"></i>
                             </span>
                         </label>
@@ -35,15 +49,6 @@
                                 <i class="icon-retweet"></i>
                             </span>
                         </label>
-
-                        <label class="block">
-                            <input type="checkbox" class="ace" />
-                            <span class="lbl">
-                                I accept the
-                                <a href="#">User Agreement</a>
-                            </span>
-                        </label>
-
                         <div class="space-24"></div>
 
                         <div class="clearfix">

@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="infobox-data">
-                        <span class="infobox-data-number">X</span>
+                        <span class="infobox-data-number">{{ count($admins) }}</span>
                         <div class="infobox-content">Admins</div>
                     </div>
                 </div>

@@ -13,7 +13,27 @@
 
 App::before(function($request)
 {
-	//
+
+    View::composer('admin.components.sidebar', function($view)
+    {
+        $comments_url = 'https://developers.facebook.com/tools/comments?id=' . Settings::findSettings('gallery', 'facebook_app_id');
+        if(Sentry::getUser()->hasAccess('admin'))
+        {
+            $meniu[] = array('icon' => 'icon-dashboard',    'title' => 'Dashboard',     'url' => URL::action('DashboardController@getDashboard'));
+            $meniu[] = array('icon' => 'icon-group',        'title' => 'Users',         'url' => URL::action('UsersController@getUsers'));
+            $meniu[] = array('icon' => 'icon-cogs',        'title' => 'Settings',         'url' => URL::action('SettingsController@getGallerySettings'));
+            $meniu[] = array('icon' => 'icon-comments',        'title' => 'Comments',         'url' => $comments_url );
+        }
+
+        if(Sentry::getUser()->hasAccess('user'))
+        {
+            $meniu[] = array('icon' => 'icon-user',         'title' => 'Profile',       'url' => URL::action('UsersController@getProfile', array('user_id' => Sentry::getUser()->id)));
+            $meniu[] = array('icon' => 'icon-picture',      'title' => 'Gallery',       'url' => URL::action('AlbumsController@index'));
+        }
+
+        $view->with('meniu', $meniu);
+    });
+
 });
 
 
@@ -37,14 +57,20 @@ Route::filter('auth', function()
 {
     $user = Sentry::getUser();
     if(empty($user)){
-	    return Redirect::to('user/login');
+        return Redirect::to('user/login');
     }
 });
 
-
-Route::filter('auth.basic', function()
+Route::filter('admin', function()
 {
-	return Auth::basic();
+    $user = Sentry::getUser();
+    if(empty($user)){
+        return Redirect::to('user/login');
+    }
+    if(!$user->hasAccess('admin'))
+    {
+        App::abort(404, 'You do not have access to this page!');
+    }
 });
 
 /*

@@ -10,4 +10,10 @@ class PhotoTag extends Eloquent{
     {
         return $this->belongsTo('Photo');
     }
+
+    public function scopeSearch($query, $tag)
+    {
+        $tag = '%' . $tag . '%';
+        return $query->where('title', '>', $tag)->take(5)->get();
+    }
 } 

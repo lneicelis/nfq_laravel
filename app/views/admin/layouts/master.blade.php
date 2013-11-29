@@ -17,6 +17,9 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
 
+    <meta property="fb:app_id" content="{{ Settings::findSettings('gallery', 'facebook_app_id'); }}" />
+    <meta property="fb:admins" content="{{ Settings::findSettings('gallery', 'facebook_app_admins'); }}" />
+
     @section('head-css')
         @include('admin.resources.css')
     @show
@@ -40,7 +43,7 @@
 
 		<div class="navbar-container" id="navbar-container">
 			<div class="navbar-header pull-left">
-				<a href="{{ URL::to('/') }}" class="navbar-brand">
+				<a href="{{ URL::action('DashboardController@getHome') }}" class="navbar-brand">
 					<small>
 						<i class="icon-camera"></i>
 						NFQ Gallery
@@ -54,7 +57,7 @@
 						<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 							<img class="nav-user-photo" src="{{ URL::asset('assets/avatars/user.jpg') }}" alt="Jason's Photo" />
                                 <span class="user-info">
-                                    <small>Welcome,</small>
+                                    <small>Welcome,</small> {{ Sentry::getUser()->first_name }}
                                 </span>
 							<i class="icon-caret-down"></i>
 						</a>
@@ -103,6 +106,15 @@
             <div class="main-content">
                 <div class="breadcrumbs" id="breadcrumbs">
                     {{ Breadcrumbs::render() }}
+
+                    <div class="nav-search" id="nav-search">
+                        <form method="get" class="form-search" action="{{ URL::action('SearchController@getSearch') }}">
+                            <span class="input-icon">
+                                <input name="search" type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off">
+                                <i class="icon-search nav-search-icon"></i>
+                            </span>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="page-content">

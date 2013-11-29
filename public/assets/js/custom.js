@@ -3,6 +3,7 @@
 
     $(".ajax").click(function(event)
     {
+        console.log("ajax called");
         event.preventDefault();
 
         var obj = this;

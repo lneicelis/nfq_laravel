@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Redirect;
 class UsersController extends \BaseController {
 
     public function __construct(){
-        Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
+        Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
     }
 
     /**
@@ -69,7 +69,7 @@ class UsersController extends \BaseController {
                         Sentry::loginAndRemember($user);
                     }
 
-                    return Redirect::action('DashboardController@getIndex');
+                    return Redirect::action('DashboardController@getHome');
                 }
                 catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
                 {
@@ -125,17 +125,12 @@ class UsersController extends \BaseController {
      */
     public function postRegister()
 	{
-        $email = Input::get('email');
-        $password =Input::get('password');
-        $confirm_password = Input::get('confirm_password');
 
         $validator = Validator::make(
+            Input::get(),
             array(
-                'email' => $email,
-                'password' => $password,
-                'confirm_password' => $confirm_password
-            ),
-            array(
+                'first_name' => 'required',
+                'last_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password'
@@ -155,10 +150,13 @@ class UsersController extends \BaseController {
             {
                 // Let's register a user.
                 $user = Sentry::register(array(
-                    'email'    => $email,
-                    'password' => $password,
+                    'first_name'    => Input::get('first_name'),
+                    'last_name'    => Input::get('last_name'),
+                    'email'    => Input::get('email'),
+                    'password' => Input::get('password'),
                 ), true);
 
+                UserInfo::create(array('user_id' => $user->id));
 
                 $user->addGroup(Sentry::findGroupByName('User'));
 
@@ -192,22 +190,46 @@ class UsersController extends \BaseController {
         }
         return View::make('admin.users.registration-form', array(
             'alerts' => @$alerts,
-            'email' => @email));
+            'email' => @email,
+            'input' => Input::get()
+        ));
 	}
 
     /**
-     * Showing user profile
+     * @param $user_id
      * @return mixed
      */
-    public function getProfile()
+    public function getProfile($user_id)
 	{
-        $msg = 'Welcome!';
-        $logout_url = URL::to('user/logout');
-        $user = Session::get('cartalyst_sentry.0');
-        $results = DB::select('select * from users where id = ?', array($user));
+        $user = DB::table('users')
+            ->where('users.id', '=', $user_id)
+            ->join('users_info', 'users_info.user_id', '=', 'users.id')
+            ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
+                'users_info.age', 'users_info.skype', 'users_info.website')->first();
 
-        return View::make('admin.users.profile', array('user' => $user, 'message' => $msg, 'logout_url' => $logout_url));
+        $albums = DB::table('albums')->where('user_id', '=', $user_id);
+        $photos = DB::table('albums')
+            ->where('user_id', '=', $user_id)
+            ->join('photos', 'photos.album_id', '=', 'albums.id');
+
+        $no_comments = $albums->sum('no_comments') + $photos->sum('photos.no_comments');
+        $no_likes = $albums->sum('no_likes') + $photos->sum('photos.no_likes');
+
+        Breadcrumbs::addCrumb('Profile', URL::action('UsersController@getProfile', array('user_id' => $user_id)));
+        return View::make('admin.users.profile', array(
+            'user' => $user,
+            'albums' => $albums,
+            'photos' => $photos,
+            'no_comments' => $no_comments,
+            'no_likes' => $no_likes,
+            'can_edit' => $this->canAccess('admin', false, $user->id)
+        ));
 	}
+
+    public function postProfilePicture()
+    {
+        return Response::make("bla", 200);
+    }
 
     public function getResetPassword()
     {
@@ -358,7 +380,7 @@ class UsersController extends \BaseController {
 
     public function postUserEdit()
     {
-        $this->canAccess('admin');
+        $this->canAccess('admin', true);
 
         $validator = Validator::make(
             Input::get(),
@@ -385,4 +407,51 @@ class UsersController extends \BaseController {
         }
     }
 
+    public function postUpdateProfile()
+    {
+        //WHO CAN ACCESS
+        $user = Sentry::getUser();
+        $this->canAccess('admin', true, $user->id);
+
+        $input = Input::only('name', 'value');
+        $validator = Validator::make(
+            $input,
+            array(
+                'name' => 'required',
+                'value' => 'required'
+            )
+        );
+        if(!$validator->fails())
+        {
+            $main_table = array('first_name', 'last_name');
+            $name = $input['name'];
+            $value = $input['value'];
+
+            if(in_array($name, $main_table))
+            {
+                $user->update(array($name => $value));
+            }else{
+                UserInfo::findById($user->id)->update(array($name => $value));
+            }
+
+            return Response::make('ok', 200);
+        }else{
+            return Response::make('failed', 404);
+        }
+    }
+
+    public function postFollow()
+    {
+        if(Input::has('id'))
+        {
+            $following_id = Input::get('id');
+            $follower_id = Sentry::getUser()->id;
+
+            UserFollow::create(array(
+                'following_id' => $following_id,
+                'follower_id' => $follower_id
+            ));
+
+        }
+    }
 }

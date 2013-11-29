@@ -25,7 +25,7 @@
 
         },
 
-        // the constrctor
+        // the constructor
         _create: function(){
             console.log("create called");
             $(".select-tag-color").maggerColorPicker();
@@ -56,16 +56,21 @@
         setGetters: function(){
             console.log("setGetters called");
 
+
+            if($("#" + this.options.tagContainerId).find("." + this.options.tagContainerId).length > 0){
+                $("#" + this.options.tagContainerId).find("img").unwrap();
+            }
             this.element.maggerShow({
                 getTagsUrl: this.options.getTagsUrl,
                 async: false});
 
             this.tagsConainer = $(document).find("." + this.options.tagContainerId);
             this.tagsForm = $("#" + this.options.formId);
-            this.tags = this.tagsConainer.find("." + this.options.tagClass);
-            this.closeButton = this.tagsConainer.find("." + this.options.formCloseClass);
-            this.deleteButton = this.tagsConainer.find("." + this.options.formDeleteClass);
-            this.colorpickButton = this.tagsConainer.find(".color-pick-button").removeClass("selected");
+            this.tags = $(document).find("." + this.options.tagClass);
+            this.closeButton = $(document).find("." + this.options.formCloseClass);
+            this.deleteButton = $(document).find("." + this.options.formDeleteClass);
+            console.log(this.closeButton);
+            this.colorpickButton = $(document).find(".color-pick-button").removeClass("selected");
 
             this.unsetGetters();
 
@@ -129,8 +134,9 @@
         },
 
         onClickCloseButton: function(e){
+            console.log("onClickCloseButton clicked");
             e.stopPropagation();
-            $("." + this.options.formContainerClass).hide();
+            $(document).find("." + this.options.formContainerClass).hide();
         },
 
         onClickTag: function(e){

@@ -7,15 +7,18 @@ class AlbumsController extends \BaseController {
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
     }
 
-	public function index()
+	public function index($user_id = null)
 	{
-        $user = Sentry::getUser();
+
+        if($user_id === null)
+            $user_id = Sentry::getUser()->id;
+
         $default_cover = 'default.jpg';
 
         $albums = DB::table('albums')
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
-            ->where('albums.user_id', '=', $user->id)
-            ->select('albums.id', 'albums.title', 'albums.description', 'albums.no_photos', 'photos.file_name')
+            ->where('albums.user_id', '=', $user_id)
+            ->select('albums.id', 'albums.user_id', 'albums.title', 'albums.description', 'albums.no_photos', 'albums.no_comments', 'albums.no_likes', 'photos.file_name')
             ->get();
 
         if(empty($albums))
@@ -23,19 +26,20 @@ class AlbumsController extends \BaseController {
             $alerts[] = array(
                 'type' => 'info',
                 'title' => 'Info',
-                'message' => 'You do not have any albums yet.');
+                'message' => 'There is no albums in the gallery.');
         }
 
         return View::make('admin.gallery.albums-list', array(
             'alerts' => @$alerts,
             'albums' => $albums,
-            'default_cover' => $default_cover));
+            'default_cover' => $default_cover,
+            'can_edit' => $this->canAccess('admin', false, $user_id)
+        ));
 	}
 
 
 	public function postCreate()
 	{
-
         $validator = Validator::make(
             Input::get(),
             array(
@@ -109,7 +113,7 @@ class AlbumsController extends \BaseController {
             $alerts[] = array(
                 'type' => 'info',
                 'title' => 'Info',
-                'message' => 'The album is empty');
+                'message' => 'The album is empty.');
         }
 
         Breadcrumbs::addCrumb($album->title . ' album');
@@ -118,7 +122,9 @@ class AlbumsController extends \BaseController {
             'alerts' => @$alerts,
             'album' => $album,
             'albums' => $albums,
-            'photos' => $album->photos));
+            'photos' => $album->photos,
+            'can_edit' => $this->canAccess('admin', false, $album->user_id)
+        ));
 	}
 
 	public function postEdit()
@@ -128,7 +134,7 @@ class AlbumsController extends \BaseController {
 		$title = Input::get('title');
 		$description = Input::get('description');
         $user_id = Sentry::getUser()->id;
-        $album = Album::whereRaw('id = ? AND user_id = ?',array($album_id, $user_id))->first();
+        $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->first();
 
         if(!empty($album))
         {
@@ -168,13 +174,14 @@ class AlbumsController extends \BaseController {
 	public function destroy($album_id)
 	{
         $album = Album::find($album_id);
+        $this->canAccess('admin', true, $album->user_id);
+
         if($album === null)
         {
             App::abort(404);
         }
 
         $photos = $album->photos;
-
 
         if(!empty($photos))
         {
@@ -192,7 +199,7 @@ class AlbumsController extends \BaseController {
 
     public function postComment()
     {
-        die(var_dump(Input::get()));
+
         $validator = Validator::make(
             Input::get(),
             array(

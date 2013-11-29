@@ -73,7 +73,7 @@ window.fbAsyncInit = function() {
 */
 window.fbAsyncInit = function() {
     FB.init({
-        appId      : '367895586644041', // App ID
+        //appId      : '367895586644041', // App ID
         //channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
         status     : true, // check login status
         cookie     : true, // enable cookies to allow the server to access the session
@@ -98,7 +98,7 @@ window.fbAsyncInit = function() {
         }
     );
 
-    function onCommentCreate(commentID,href) {
+    function onCommentCreate(commentID,href){
         $.ajax({
             type: 'POST',
             url: 'handlecomment.php',

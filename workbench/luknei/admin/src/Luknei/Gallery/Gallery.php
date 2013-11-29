@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Luko
- * Date: 13.11.9
- * Time: 19.02
- */
 
 namespace Luknei\Gallery;
 
@@ -16,8 +10,21 @@ class Gallery {
     protected $photo_max_width = 640;
     protected $photo_max_height = 640;
 
-    protected $thumb_path = 'gallery/thumbs/';
-    protected $photo_path = 'gallery/images/';
+    protected $thumb_path = 'public_gallery/thumbs/';
+    protected $photo_path = 'public_gallery/images/';
+
+    public function __construct()
+    {
+        $thumb_width = \Settings::findSettings('gallery', 'thumb_width');
+        $thumb_height = \Settings::findSettings('gallery', 'thumb_height');
+        $photo_max_width = \Settings::findSettings('gallery', 'max_photo_width');
+        $photo_max_height = \Settings::findSettings('gallery', 'max_photo_height');
+
+        $this->thumb_width = (integer)$thumb_width;
+        $this->thumb_height = (integer)$thumb_height;
+        $this->photo_max_width = (integer)$photo_max_width;
+        $this->photo_max_height = (integer)$photo_max_height;
+    }
 
     public function thumbnail($open, $save_name)
     {
@@ -117,4 +124,54 @@ class Gallery {
             return FALSE;
         }
     }
+
+    /**
+     * @param int $photo_max_height
+     */
+    public function setPhotoMaxHeight($photo_max_height)
+    {
+        $this->photo_max_height = (integer)$photo_max_height;
+    }
+
+    /**
+     * @param int $photo_max_width
+     */
+    public function setPhotoMaxWidth($photo_max_width)
+    {
+        $this->photo_max_width = (integer)$photo_max_width;
+    }
+
+    /**
+     * @param string $photo_path
+     */
+    public function setPhotoPath($photo_path)
+    {
+        $this->photo_path = $photo_path;
+    }
+
+    /**
+     * @param int $thumb_height
+     */
+    public function setThumbHeight($thumb_height)
+    {
+        $this->thumb_height = (integer)$thumb_height;
+    }
+
+    /**
+     * @param string $thumb_path
+     */
+    public function setThumbPath($thumb_path)
+    {
+        $this->thumb_path = $thumb_path;
+    }
+
+    /**
+     * @param int $thumb_width
+     */
+    public function setThumbWidth($thumb_width)
+    {
+        $this->thumb_width = (integer)$thumb_width;
+    }
+
+
 } 

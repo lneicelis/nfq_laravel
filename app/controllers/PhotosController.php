@@ -2,20 +2,10 @@
 
 class PhotosController extends \BaseController {
 
-    private  function canEdit($album_id)
-    {
-        $user_id = Sentry::getUser()->id;
-        $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->count();
-        if($album === 1){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     public function getUpload($album_id)
     {
         $album = Album::find($album_id);
+        $this->canAccess('admin', true, $album->user_id);
 
         Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
@@ -23,15 +13,14 @@ class PhotosController extends \BaseController {
         Breadcrumbs::addCrumb('Upload photos');
 
         return View::make('admin.gallery.photos-upload-form', array(
-            'album_id' => $album_id));
+            'album_id' => $album_id
+        ));
     }
 
     public function postUpload($album_id)
     {
-        if(!$this->canEdit($album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
+        $album = Album::find($album_id);
+        $this->canAccess('admin', true, $album->user_id);
 
         if (Input::hasFile('file'))
         {
@@ -51,9 +40,9 @@ class PhotosController extends \BaseController {
 
                 $tmp_file = $file->getRealPath();
 
-                $create_thumb = Gallery::thumbnail($tmp_file, $new_file_name, 200, 200);
+                $create_thumb = Gallery::thumbnail($tmp_file, $new_file_name);
 
-                $create_image = Gallery::image($tmp_file, $new_file_name, 800, 800);
+                $create_image = Gallery::image($tmp_file, $new_file_name);
 
                 if($create_thumb && $create_image)
                 {
@@ -86,18 +75,11 @@ class PhotosController extends \BaseController {
 
     public function edit()
 	{
-        $photo_id = Input::get('photo_id');
-        $description = Input::get('description');
+        $photo = Photo::find(Input::get('photo_id'));
+        $this->canAccess('admin', true, $photo->album->user_id);
 
-        $photo = Photo::find($photo_id);
-        if(!$this->canEdit($photo->album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
         $validator = Validator::make(
-            array(
-                'description' => $description,
-            ),
+            Input::get(),
             array(
                 'description' => 'max:255'
             ),
@@ -106,7 +88,8 @@ class PhotosController extends \BaseController {
             )
         );
         if(!$validator->fails()){
-            $photo->description = $description;
+
+            $photo->description = Input::get('description');
             $photo->save();
 
             $gritter[] = array(
@@ -126,15 +109,18 @@ class PhotosController extends \BaseController {
 	{
         $photo = Photo::find($photo_id);
 
-        if(!$this->canEdit($photo->album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
+        //check if this user can access this function => admin or owner
+        $this->canAccess('admin', true, $photo->album->user_id);
 
-        unlink(public_path('gallery/images/' . $photo->file_name));
-        unlink(public_path('gallery/thumbs/' . $photo->file_name));
+        //delete actual files on server
+        unlink(public_path('public_gallery/images/' . $photo->file_name));
+        unlink(public_path('public_gallery/thumbs/' . $photo->file_name));
+
+        //delete photo and its tags records in database
         Photo::destroy($photo->id);
         PhotoTag::where('photo_id', '=', $photo->id)->delete();
+
+        //decrease the number of photos in the album
         $photo->album->decrement('no_photos');
 
         $gritter = array(
@@ -161,44 +147,39 @@ class PhotosController extends \BaseController {
         $photos = Photo::where('album_id', '=', $id)->get();
 
         return Response::json($photos, 200);
-
     }
 
     public function postTransfer()
     {
-        $album_id = Input::get('album_id');
-        $photo_id = Input::get('photo_id');
+        $album = Album::find(Input::get('album_id'));
+        $photo = Photo::find(Input::get('photo_id'));
 
-        if(!$this->canEdit($album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
+        //check if this user can access this function => admin or owner
+        $this->canAccess('admin', true, $album->user_id);
+        $this->canAccess('admin', true, $photo->album->user_id);
 
-        Photo::find($photo_id)->album->decrement('no_photos');
-        Album::find($album_id)->increment('no_photos');
-        $affectedRows = Photo::where('id', '=', $photo_id)->update(array('album_id' => $album_id));
+        $photo->album->decrement('no_photos');
+        $album->increment('no_photos');
+        $affectedRows = Photo::where('id', '=', $photo->id)->update(array('album_id' => $album->id));
 
         if($affectedRows > 0){
             return Response::json(200);
         }else{
             Return response::json(404);
         }
-
     }
 
     public function postCrop()
     {
+        $photo = Photo::find(Input::get('photo-id'));
+
+        //check if this user can access this function => admin or owner
+        $this->canAccess('admin', true, $photo->album->user_id);
+
         $x = (integer)Input::get('x');
         $y = (integer)Input::get('y');
         $w = (integer)Input::get('w');
         $h = (integer)Input::get('h');
-
-        $photo = Photo::find(Input::get('photo-id'));
-
-        if(!$this->canEdit($photo->album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
 
         $validator = Validator::make(
             Input::get(),
@@ -249,10 +230,9 @@ class PhotosController extends \BaseController {
         $rotate = ($direction === "left") ? 270 : 90;
 
         $photo = Photo::find(Input::get('id'));
-        if(!$this->canEdit($photo->album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
+
+        //check if this user can access this function => admin or owner
+        $this->canAccess('admin', true, $photo->album->user_id);
 
         if(!empty($photo->id))
         {
@@ -272,10 +252,9 @@ class PhotosController extends \BaseController {
     public function postStatus()
     {
         $photo = Photo::find(Input::get('id'));
-        if(!$this->canEdit($photo->album_id)){
-            $error = "You are not authorized to modify this album!";
-            return Response::json($error, 404);
-        }
+
+        //check if this user can access this function => admin or owner
+        $this->canAccess('admin', true, $photo->album->user_id);
 
         if(!empty($photo->id))
         {
@@ -311,6 +290,7 @@ class PhotosController extends \BaseController {
 
             if(Input::get('action') == 'increment')
                 $photo->increment('no_comments');
+
             if(Input::get('action') == 'decrement')
                 $photo->decrement('no_comments');
         }

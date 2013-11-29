@@ -1,12 +1,16 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    <p>
-        <a id="new-album" class="btn btn-primary" href="#">
-            <i class="icon-plus align-top bigger-125"></i>
-            Create a new album
-        </a>
-    </p>
+
+    @if($can_edit)
+        <p>
+            <a id="new-album" class="btn btn-primary" href="#">
+                <i class="icon-plus align-top bigger-125"></i>
+                Create a new album
+            </a>
+        </p>
+    @endif
+
     <ul class="ace-thumbnails">
         @foreach ($albums as $album)
 
@@ -14,36 +18,52 @@
             <a href="{{ URL::action('AlbumsController@show', array($album->id)) }}" title="{{ $album->title }}" >
 
                 @if(!empty($album->file_name))
-                    <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $album->file_name) }}" />
+                    <img alt="200x200" src="{{ URL::asset('public_gallery/thumbs/' . $album->file_name) }}" />
                 @else
-                    <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $default_cover) }}" />
+                    <img alt="200x200" src="{{ URL::asset('public_gallery/thumbs/' . $default_cover) }}" />
                 @endif
 
                 <div class="tags">
 
                         <span class="label-holder">
-                            <span class="label label-warning arrowed"><b>{{ $album->title }}</b></span>
+                            <span class="label label-info arrowed"><b>{{ $album->title }}</b></span>
                         </span>
 
                         <span class="label-holder">
-                            <span class="label label-danger">{{ $album->no_photos }} photos</span>
+                            <span class="label label-warning">
+                                {{ $album->no_photos }}
+                                <i class="icon-picture"></i>
+                            </span>
                         </span>
 
                         <span class="label-holder">
-                            <span class="label label-info">comments</span>
+                            <span class="label label-success">
+                                {{ $album->no_comments }}
+                                <i class="icon-comments"></i>
+                            </span>
+                        </span>
+
+                        <span class="label-holder">
+                            <span class="label label-danger arrowed-in">
+                                {{ $album->no_likes }}
+                                <i class="icon-facebook"></i>
+                            </span>
                         </span>
                 </div>
             </a>
-            <div class="tools">
 
-                <a href="#album-edit-form" class="album-edit-form" data-album-id="{{ $album->id }}" data-album-title="{{ @$album->title }}" data-album-description="{{ @$album->description }}">
-                    <i class="icon-pencil"></i>
-                </a>
+            @if($can_edit)
+                <div class="tools">
 
-                <a href="{{ URL::action('AlbumsController@destroy', array('album_id' => $album->id)) }}" title="Delete the album">
-                    <i class="icon-remove red"></i>
-                </a>
-            </div>
+                    <a href="#album-edit-form" class="album-edit-form" data-album-id="{{ $album->id }}" data-album-title="{{ @$album->title }}" data-album-description="{{ @$album->description }}">
+                        <i class="icon-pencil"></i>
+                    </a>
+
+                    <a href="{{ URL::action('AlbumsController@destroy', array('album_id' => $album->id)) }}" title="Delete the album">
+                        <i class="icon-remove red"></i>
+                    </a>
+                </div>
+            @endif
         </li>
 
         @endforeach

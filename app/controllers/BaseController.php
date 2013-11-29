@@ -15,21 +15,27 @@ class BaseController extends Controller {
 		}
 	}
 
-    protected function canAccess($group)
+    protected function canAccess($group, $abort = false, $user_id = false)
     {
-        if(!Sentry::getUser()->hasAccess($group))
+
+        if($user_id !== false)
         {
-            App::abort(404, 'You do not have access to this page!');
+            if(Sentry::getUser()->id == $user_id)
+            {
+                return true;
+            }
         }
-    }
-    protected function canSee($group)
-    {
+
         if(!Sentry::getUser()->hasAccess($group))
         {
-            return false;
+            if($abort)
+            {
+                App::abort(404, 'You do not have access to this page!');
+            }else{
+                return false;
+            }
         }else{
             return true;
         }
     }
-
 }

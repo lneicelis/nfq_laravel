@@ -16,4 +16,5 @@ class Album extends Eloquent {
     {
         return $this->hasMany('Photo', 'album_id');
     }
+
 } 

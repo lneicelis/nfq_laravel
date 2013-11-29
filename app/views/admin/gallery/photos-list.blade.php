@@ -2,7 +2,7 @@
 
 @section('head-css')
 
-    <link rel="stylesheet" href="{{ URL::asset('assets/css/chosen.css') }}" />
+<link rel="stylesheet" href="{{ URL::asset('assets/css/chosen.css') }}" xmlns="http://www.w3.org/1999/html"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/css/jquery.Jcrop.min.css') }}" />
     <link rel="stylesheet" href="{{ URL::asset('assets/css/photo-tagger.css') }}" />
     <link rel="stylesheet" href="{{ URL::asset('assets/css/colorpicker.css') }}" />
@@ -25,6 +25,7 @@
 
 @section('content')
 
+    @if($can_edit)
     <p>
         <a class="btn btn-primary" href="{{ URL::action('PhotosController@getUpload', array('album_id' => $album->id)) }}">
             <i class="icon-cloud-upload align-top bigger-125"></i>
@@ -35,6 +36,7 @@
             Move photos
         </a>
     </p>
+    @endif
 
     <div class="col-sm-4 pull-right transfer-div" style="display: none">
         <div class="widget-box">
@@ -65,78 +67,85 @@
     @foreach ($photos as $photo)
 
         <li class="med-photo-thumb" data-photo-id="{{ $photo->id }}">
-            <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" title="{{ $photo->description }}" data-rel="colorbox" data-photo-id="{{ $photo->id }}">
-                <img alt="200x200" src="{{ URL::asset('gallery/thumbs/' . $photo->file_name) }}" data-photo-id="{{ $photo->id }}" data-rotate-current="0" data-photo-status="{{ $photo->status }}" />
+            <a href="{{ URL::asset('public_gallery/images/' . $photo->file_name) }}" title="{{ $photo->description }}" data-rel="colorbox" data-photo-id="{{ $photo->id }}">
+                <img alt="200x200" src="{{ URL::asset('public_gallery/thumbs/' . $photo->file_name) }}" data-photo-id="{{ $photo->id }}" data-rotate-current="0" data-photo-status="{{ $photo->status }}" />
 
                 <div class="tags">
                     <span class="label-holder">
-                        <span class="label label-info arrowed">{{ $photo->no_tags }}
-                        <i class="icon-tags"></i>
+                            <span class="label label-info arrowed">
+                                {{ $photo->no_tags }}
+                                <i class="icon-tags"></i>
+                            </span>
                         </span>
-                    </span>
 
-                    <span class="label-holder">
-                        <span class="label label-warning">
-                            <i class="icon-comments"></i>
+                        <span class="label-holder">
+                            <span class="label label-warning">
+                                {{ $photo->no_comments }}
+                                <i class="icon-comments"></i>
+                            </span>
                         </span>
-                    </span>
 
-                    <span class="label-holder">
-                        <span class="label label-danger">
-                            <i class="icon-facebook"></i>
+                        <span class="label-holder">
+                            <span class="label label-success arrowed-in">
+                                {{ $photo->no_likes }}
+                                <i class="icon-facebook"></i>
+                            </span>
                         </span>
                     </span>
                 </div>
-
             </a>
 
-            <div class="tools">
+            @if($can_edit)
+                <div class="tools">
 
-                <a href="{{ URL::action('AlbumsController@postSetCover') }}" class="ajax" data-id="{{ $photo->id }}" title="Make cover photo">
-                    <i class="icon-link"></i>
-                </a>
+                    <a href="{{ URL::action('AlbumsController@postSetCover') }}" class="ajax" data-id="{{ $photo->id }}" title="Make cover photo">
+                        <i class="icon-link"></i>
+                    </a>
 
-                <a href="#" class="photo-edit-form" data-photo-id="{{ $photo->id }}" data-photo-description="{{ $photo->description }}">
-                    <i class="icon-pencil" title="Edit photo"></i>
-                </a>
+                    <a href="#" class="photo-edit-form" data-photo-id="{{ $photo->id }}" data-photo-description="{{ $photo->description }}">
+                        <i class="icon-pencil" title="Edit photo"></i>
+                    </a>
 
-                <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" class="photo-crop-form" data-photo-id="{{ $photo->id }}">
-                    <i class="icon-crop" title="Crop photo"></i>
-                </a>
+                    <a href="{{ URL::asset('public_gallery/images/' . $photo->file_name) }}" class="photo-crop-form" data-photo-id="{{ $photo->id }}">
+                        <i class="icon-crop" title="Crop photo"></i>
+                    </a>
 
-                <a href="{{ URL::asset('gallery/images/' . $photo->file_name) }}" class="photo-tag-form" data-photo-id="{{ $photo->id }}">
-                    <i class="icon-tags" title="Tag photo"></i>
-                </a>
+                    <a href="{{ URL::asset('public_gallery/images/' . $photo->file_name) }}" class="photo-tag-form" data-photo-id="{{ $photo->id }}">
+                        <i class="icon-tags" title="Tag photo"></i>
+                    </a>
 
-                <a href="{{ URL::action('PhotosController@postStatus') }}" class="ajax" data-id="{{ $photo->id }}" data-after="change-visibility">
-                    @if($photo->status === 0)
-                        <i class="icon-eye-open" title="Make this photo visible"></i>
-                    @else
-                        <i class="icon-eye-close" title="Make this photo invisible"></i>
-                    @endif
-                </a>
+                    <a href="{{ URL::action('PhotosController@postStatus') }}" class="ajax" data-id="{{ $photo->id }}" data-after="change-visibility">
+                        @if($photo->status === 0)
+                            <i class="icon-eye-open" title="Make this photo visible"></i>
+                        @else
+                            <i class="icon-eye-close" title="Make this photo invisible"></i>
+                        @endif
+                    </a>
 
-                <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'right')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-right">
-                    <i class="icon-rotate-right" title="Rotate photo 90"></i>
-                </a>
+                    <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'right')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-right">
+                        <i class="icon-rotate-right" title="Rotate photo 90"></i>
+                    </a>
 
-                <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'left')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-left">
-                    <i class="icon-rotate-left" title="Rotate photo -90"></i>
-                </a>
+                    <a href="{{ URL::action('PhotosController@postRotate', array('direction' =>'left')) }}" class="ajax" data-id="{{ $photo->id }}" data-after="rotate-left">
+                        <i class="icon-rotate-left" title="Rotate photo -90"></i>
+                    </a>
 
-                <a href="{{ URL::action('PhotosController@destroy', array('photo_id' => $photo->id)) }}" class="ajax"  data-after="delete-photo" title="Delete photo">
-                    <i class="icon-remove red"></i>
-                </a>
-            </div>
+                    <a href="{{ URL::action('PhotosController@destroy', array('photo_id' => $photo->id)) }}" class="ajax"  data-after="delete-photo" title="Delete photo">
+                        <i class="icon-remove red"></i>
+                    </a>
+                </div>
+            @endif
         </li>
 
     @endforeach
     </ul>
 
-    @include('admin.gallery.modals.photo-edit-modal')
-    @include('admin.gallery.modals.photo-crop-modal')
-    @include('admin.gallery.modals.photo-tag-modal')
-    @include('admin.gallery.modals.colorbox-modal')
+    @if($can_edit)
+        @include('admin.gallery.modals.photo-edit-modal')
+        @include('admin.gallery.modals.photo-crop-modal')
+        @include('admin.gallery.modals.photo-tag-modal')
+    @endif
+        @include('admin.gallery.modals.colorbox-modal')
 
 @stop
 
@@ -160,7 +169,7 @@
     <script type="text/javascript">
         var $getPhotos = "{{ URL::action('PhotosController@getPhotos') }}";
         var $postTransferUrl = "{{ URL::action('PhotosController@postTransfer') }}";
-        var $thumbsUrl = "{{ URL::asset('gallery/thumbs') }}";
+        var $thumbsUrl = "{{ URL::asset('public_gallery/thumbs') }}";
 
 
         jQuery(function ($) {
@@ -184,7 +193,8 @@
                 },
                 onComplete: function () {
                     //$.colorbox.resize();
-                    $(document).find("#cboxLoadedContent").append('<div class="fb-photo-likes fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="250" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>')
+                    $(document).find("#cboxLoadedContent")
+                        .append('<div class="fb-photo-likes fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="250" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>')
                         .append('<div class="fb-photo-comments fb-comments" data-href="http://onlinetv.lt?id=6" data-width="250" data-num-posts="3"></div>');
                     $(document).find(".cboxPhoto").attr("magger-photo-id", $(this).attr("data-photo-id"))
                         .maggerShow({getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}"});

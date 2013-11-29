@@ -4,26 +4,18 @@
     </div><!-- #sidebar-shortcuts -->
 
     <ul class="nav nav-list">
-        <li>
-            <a href="{{ URL::action('DashboardController@getIndex') }}">
-                <i class="icon-dashboard"></i>
-                <span class="menu-text"> Dashboard </span>
-            </a>
-        </li>
 
-        <li>
-            <a href="{{ URL::action('UsersController@getUsers') }}">
-                <i class="icon-group"></i>
-                <span class="menu-text"> Users </span>
-            </a>
-        </li>
+        @foreach($meniu as $item)
 
-        <li>
-            <a href="{{ URL::action('AlbumsController@index') }}">
-                <i class="icon-picture"></i>
-                <span class="menu-text"> Gallery </span>
-            </a>
-        </li>
+            <li>
+                <a href="{{ $item['url'] }}">
+                    <i class="{{ $item['icon'] }}"></i>
+                    <span class="menu-text"> {{ $item['title'] }} </span>
+                </a>
+            </li>
+
+        @endforeach
+
     </ul><!-- /.nav-list -->
 
     <div class="sidebar-collapse" id="sidebar-collapse">

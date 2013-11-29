@@ -31,61 +31,91 @@ Route::post('/user/change_password/{reset_code}', array(
 Route::get('/user/all', array(
     'before' => 'auth',
     'uses' => 'UsersController@getUsers'));
+
 Route::post('/user/edit', array(
     'before' => 'auth',
     'uses' => 'UsersController@postUserEdit'));
 
-Route::get('/user/profile', array(
+Route::get('/user/profile/{user_id}', array(
     'before' => 'auth',
     'uses' => 'UsersController@getProfile'));
+
+Route::post('/user/profile-update', array(
+    'before' => 'auth|csrf',
+    'uses' => 'UsersController@postUpdateProfile'));
+
+Route::post('/user/follow', array(
+    'before' => 'auth|csrf',
+    'uses' => 'UsersController@postFollow'));
+
+/**
+ * Settings routes
+ */
+
+Route::get('/settings/gallery', array(
+    'before' => 'admin',
+    'uses' => 'SettingsController@getGallerySettings'));
+
+Route::post('/settings/gallery', array(
+    'before' => 'admin|csrf',
+    'uses' => 'SettingsController@postGallerySettings'));
+
+/**
+ * Search routes
+ */
+
+Route::get('/search', array(
+    'before' => 'auth',
+    'uses' => 'SearchController@getSearch'));
 
 /**
  * Dashboard Routes
  */
 Route::get('/dashboard', array(
+    'before' => 'admin',
+    'uses' => 'DashboardController@getDashboard'));
+
+Route::get('/home', array(
     'before' => 'auth',
-    'uses' => 'DashboardController@getIndex'));
+    'uses' => 'DashboardController@getHome'));
+
 /**
  * Gallery albums routes
  */
-Route::get('/album', array(
+Route::get('/gallery/{user_id?}', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@index'));
 
-/**
- * Albums routes
- */
-
-Route::post('gallery/new-album', array(
+Route::post('/gallery/new-album', array(
     'before' => 'auth|csrf',
     'uses' => 'AlbumsController@postCreate'));
 
-Route::get('album/{id}', array(
+Route::get('/gallery/album/{id}', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@show'));
 
-Route::post('album/set_cover', array(
+Route::post('/gallery/album/set_cover', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@postSetCover'));
 
-Route::post('album/edit', array(
+Route::post('/gallery/album/edit', array(
     'before' => 'auth|csrf',
     'uses' => 'AlbumsController@postEdit'));
 
-Route::get('album/destroy/{album_id}', array(
+Route::get('/gallery/album/destroy/{album_id}', array(
     'before' => 'auth',
     'uses' => 'AlbumsController@destroy'));
 
-Route::post('album/comment', array(
+Route::post('/gallery/album/comment', array(
     'before' => '',
     'uses' => 'AlbumsController@postComment'));
 
-Route::post('album/like', array(
+Route::post('/gallery/album/like', array(
     'before' => '',
     'uses' => 'AlbumsController@postLike'));
 
 /**
- * Photos routes
+ * Gallery Photos routes
  */
 
 Route::get('/album/{album_id}/upload', array(
