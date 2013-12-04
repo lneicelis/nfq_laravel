@@ -15,6 +15,7 @@
 
                 <form action="{{ URL::action('UsersController@postRegister') }}" method="post">
                     <fieldset>
+                        {{ Form::token() }}
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input name="first_name" value="{{{ @$input['first_name'] }}}" type="text" class="form-control" placeholder="Name" />

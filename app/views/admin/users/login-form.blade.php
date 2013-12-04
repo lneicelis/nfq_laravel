@@ -13,6 +13,7 @@
 
                 <form method="POST" action="{{ URL::action('UsersController@postLogin') }}" autocomplete="on">
                     <fieldset>
+                        {{ Form::token() }}
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input name="email" value="{{{ @$email }}}" type="text" class="form-control" placeholder="Email" />

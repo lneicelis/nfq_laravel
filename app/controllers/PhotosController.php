@@ -2,21 +2,29 @@
 
 class PhotosController extends \BaseController {
 
+    /**
+     * @param $album_id
+     * @return mixed
+     */
     public function getUpload($album_id)
     {
         $album = Album::find($album_id);
         $this->canAccess('admin', true, $album->user_id);
+
+        $response['album_id'] = $album->id;
 
         Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
         Breadcrumbs::addCrumb($album->title . ' album', URL::action('AlbumsController@show', array('id' => $album_id)));
         Breadcrumbs::addCrumb('Upload photos');
 
-        return View::make('admin.gallery.photos-upload-form', array(
-            'album_id' => $album_id
-        ));
+        return View::make('admin.gallery.photos-upload-form', $response);
     }
 
+    /**
+     * @param $album_id
+     * @return mixed
+     */
     public function postUpload($album_id)
     {
         $album = Album::find($album_id);
@@ -42,13 +50,14 @@ class PhotosController extends \BaseController {
 
                 $create_thumb = Gallery::thumbnail($tmp_file, $new_file_name);
 
-                $create_image = Gallery::image($tmp_file, $new_file_name);
+                $create_image = Gallery::image($tmp_file, $new_file_name, 800, 800);
 
                 if($create_thumb && $create_image)
                 {
+                    $description = substr($file->getClientOriginalName(), 0, strlen($file->getClientOriginalName()) - strlen($file->getClientOriginalExtension()) - 1);
                     Photo::create(array(
                         'album_id' => $album_id,
-                        'description' => $file->getClientOriginalName(),
+                        'description' => $description,
                         'file_name' => $new_file_name));
 
                     Album::find($album_id)->increment('no_photos');
@@ -73,6 +82,9 @@ class PhotosController extends \BaseController {
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function edit()
 	{
         $photo = Photo::find(Input::get('photo_id'));
@@ -105,7 +117,11 @@ class PhotosController extends \BaseController {
         return Redirect::back()->with(array('gritter' => $gritter));
     }
 
-	public function destroy($photo_id)
+    /**
+     * @param $photo_id
+     * @return mixed
+     */
+    public function destroy($photo_id)
 	{
         $photo = Photo::find($photo_id);
 
@@ -133,6 +149,9 @@ class PhotosController extends \BaseController {
 
 	}
 
+    /**
+     * @return mixed
+     */
     public function getPhotos(){
 
         $id = Input::get('id');
@@ -149,6 +168,9 @@ class PhotosController extends \BaseController {
         return Response::json($photos, 200);
     }
 
+    /**
+     * @return mixed
+     */
     public function postTransfer()
     {
         $album = Album::find(Input::get('album_id'));
@@ -169,6 +191,9 @@ class PhotosController extends \BaseController {
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function postCrop()
     {
         $photo = Photo::find(Input::get('photo-id'));
@@ -225,6 +250,10 @@ class PhotosController extends \BaseController {
         return Redirect::back()->with(array('gritter' => $gritter));
     }
 
+    /**
+     * @param $direction
+     * @return mixed
+     */
     public function postRotate($direction)
     {
         $rotate = ($direction === "left") ? 270 : 90;
@@ -249,6 +278,9 @@ class PhotosController extends \BaseController {
         return Response::json(404);
     }
 
+    /**
+     * @return mixed
+     */
     public function postStatus()
     {
         $photo = Photo::find(Input::get('id'));
@@ -274,6 +306,9 @@ class PhotosController extends \BaseController {
         return Response::json(404);
     }
 
+    /**
+     *
+     */
     public function postComment()
     {
 

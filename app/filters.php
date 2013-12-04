@@ -13,10 +13,15 @@
 
 App::before(function($request)
 {
+    View::composer('admin.layouts.master', function($view)
+    {
+        $thumb = UserInfo::findById(Sentry::getUser()->id)->picture;
+        $view->with('thumb', $thumb);
+    });
 
     View::composer('admin.components.sidebar', function($view)
     {
-        $comments_url = 'https://developers.facebook.com/tools/comments?id=' . Settings::findSettings('gallery', 'facebook_app_id');
+        $comments_url = 'https://developers.facebook.com/tools/comments?id=' . Setting::findSettings('gallery', 'facebook_app_id');
         if(Sentry::getUser()->hasAccess('admin'))
         {
             $meniu[] = array('icon' => 'icon-dashboard',    'title' => 'Dashboard',     'url' => URL::action('DashboardController@getDashboard'));

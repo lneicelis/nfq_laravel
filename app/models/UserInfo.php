@@ -4,7 +4,7 @@ class UserInfo extends Eloquent{
 
     protected $table = 'users_info';
 
-    protected $fillable = array('user_id', 'age', 'skype', 'website');
+    protected $fillable = array('user_id', 'age', 'skype', 'website', 'picture');
 
     public function user()
     {
@@ -15,4 +15,5 @@ class UserInfo extends Eloquent{
     {
         return $query->where('user_id', '=', $id)->first();
     }
+
 } 

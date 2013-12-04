@@ -1,6 +1,8 @@
 
 (function ($){
 
+    $("div.pagination").find("ul").addClass("pagination");
+
     $(".ajax").click(function(event)
     {
         console.log("ajax called");

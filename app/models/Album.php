@@ -17,4 +17,13 @@ class Album extends Eloquent {
         return $this->hasMany('Photo', 'album_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('User');
+    }
+
+    public function userInfo()
+    {
+        return $this->belongsTo('UserInfo');
+    }
 } 

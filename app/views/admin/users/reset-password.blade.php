@@ -17,6 +17,7 @@
 
                 <form action="{{ URL::action('UsersController@postResetPassword') }}" method="post">
                     <fieldset>
+                        {{ Form::token() }}
                         <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input name="email" type="email" class="form-control" placeholder="Email" />

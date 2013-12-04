@@ -15,9 +15,13 @@ class Photos extends Migration {
         {
             $table->increments('id');
             $table->integer('album_id');
-            $table->string('file_name', 22);;
+            $table->string('file_name', 22);
             $table->string('description', 255)->nullable();
             $table->integer('status')->default(1);
+            $table->integer('no_tags')->default(0);
+            $table->integer('no_comments')->default(0);
+            $table->integer('no_likes')->default(0);
+            $table->integer('no_views')->default(0);
             $table->timestamp('shoot_date')->nullable();
             $table->timestamps();
         });
@@ -30,7 +34,7 @@ class Photos extends Migration {
 	 */
 	public function down()
 	{
-		//
+        Schema::drop('photos');
 	}
 
 }

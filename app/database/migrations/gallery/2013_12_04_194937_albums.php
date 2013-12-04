@@ -19,8 +19,13 @@ class Albums extends Migration {
             $table->string('short_description', 100)->nullable();
             $table->string('description', 255)->nullable();
             $table->string('location', 100)->nullable();
+            $table->integer('no_photos')->default(0);
+            $table->integer('no_comments')->default(0);
+            $table->integer('no_likes')->default(0);
             $table->integer('cover_photo')->nullable();
             $table->timestamps();
+
+            $table->index('user_id');
         });
 	}
 
@@ -31,7 +36,7 @@ class Albums extends Migration {
 	 */
 	public function down()
 	{
-		//
+        Schema::drop('albums');
 	}
 
 }

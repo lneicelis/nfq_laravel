@@ -51,28 +51,28 @@
             <tr>
                 <td class="center"> Max photo width </td>
                 <td>
-                    <span class="editable" id="max_photo_width">{{ $settings['max_photo_width'] }}</span>
+                    <span class="editable" id="max_photo_width">{{ $settings['max_photo_width'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Max photo height </td>
                 <td>
-                    <span class="editable" id="max_photo_height">{{ $settings['max_photo_height'] }}</span>
+                    <span class="editable" id="max_photo_height">{{ $settings['max_photo_height'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Thumbnail width </td>
                 <td>
-                    <span class="editable" id="thumb_width">{{ $settings['thumb_width'] }}</span>
+                    <span class="editable" id="thumb_width">{{ $settings['thumb_width'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Thumbnail height </td>
                 <td>
-                    <span class="editable" id="thumb_height">{{ $settings['thumb_height'] }}</span>
+                    <span class="editable" id="thumb_height">{{ $settings['thumb_height'] }}</span> px
                 </td>
             </tr>
 

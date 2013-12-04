@@ -13,13 +13,13 @@ class AlbumsController extends \BaseController {
         if($user_id === null)
             $user_id = Sentry::getUser()->id;
 
-        $default_cover = 'default.jpg';
-
-        $albums = DB::table('albums')
+        $response['default_cover'] = 'default.jpg';
+        $response['can_edit'] = $this->canAccess('admin', false, $user_id);
+        $response['albums'] = $albums = DB::table('albums')
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
             ->where('albums.user_id', '=', $user_id)
             ->select('albums.id', 'albums.user_id', 'albums.title', 'albums.description', 'albums.no_photos', 'albums.no_comments', 'albums.no_likes', 'photos.file_name')
-            ->get();
+            ->paginate(15);
 
         if(empty($albums))
         {
@@ -29,12 +29,7 @@ class AlbumsController extends \BaseController {
                 'message' => 'There is no albums in the gallery.');
         }
 
-        return View::make('admin.gallery.albums-list', array(
-            'alerts' => @$alerts,
-            'albums' => $albums,
-            'default_cover' => $default_cover,
-            'can_edit' => $this->canAccess('admin', false, $user_id)
-        ));
+        return View::make('admin.gallery.albums-list', $response);
 	}
 
 
@@ -100,8 +95,15 @@ class AlbumsController extends \BaseController {
 
 	public function show($id)
 	{
-        $album = Album::find($id);
-        $albums = Album::where('id', '!=', $id)->get();
+        $user = Sentry::getUser();
+
+        $response['album'] = $album = Album::find($id);
+
+        //albums where user can move photos
+        $response['albums'] = $albums = Album::where('id', '!=', $id)
+            ->where('user_id', '=', $user->id)->get();
+        $response['photos'] = Photo::where('album_id', '=', $album->id)->paginate(15);
+        $response['can_edit'] = $this->canAccess('admin', false, $album->user_id);
 
         if($album === null)
         {
@@ -118,13 +120,7 @@ class AlbumsController extends \BaseController {
 
         Breadcrumbs::addCrumb($album->title . ' album');
 
-        return View::make('admin.gallery.photos-list', array(
-            'alerts' => @$alerts,
-            'album' => $album,
-            'albums' => $albums,
-            'photos' => $album->photos,
-            'can_edit' => $this->canAccess('admin', false, $album->user_id)
-        ));
+        return View::make('admin.gallery.photos-list', $response);
 	}
 
 	public function postEdit()

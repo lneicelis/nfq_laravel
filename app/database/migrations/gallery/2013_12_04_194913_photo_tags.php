@@ -23,6 +23,8 @@ class PhotoTags extends Migration {
             $table->string('x', 8);
             $table->string('y', 8);
             $table->timestamps();
+
+            $table->index('photo_id');
         });
 	}
 
@@ -33,7 +35,7 @@ class PhotoTags extends Migration {
 	 */
 	public function down()
 	{
-		//
+        Schema::drop('photo_tags');
 	}
 
 }

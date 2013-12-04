@@ -15,7 +15,7 @@
 
             <form method="post">
                 <fieldset>
-
+                    {{ Form::token() }}
                     <label class="block clearfix">
                             <span class="block input-icon input-icon-right">
                                 <input name="password" type="password" class="form-control" placeholder="New password" />

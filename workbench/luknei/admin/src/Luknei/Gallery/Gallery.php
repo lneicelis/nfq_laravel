@@ -2,30 +2,55 @@
 
 namespace Luknei\Gallery;
 
+/**
+ * Class Gallery
+ * @package Luknei\Gallery
+ */
 class Gallery {
 
+    /**
+     * @var int
+     */
     protected $thumb_width = 200;
+    /**
+     * @var int
+     */
     protected $thumb_height = 200;
 
+    /**
+     * @var int
+     */
     protected $photo_max_width = 640;
+    /**
+     * @var int
+     */
     protected $photo_max_height = 640;
 
+    /**
+     * @var string
+     */
     protected $thumb_path = 'public_gallery/thumbs/';
+    /**
+     * @var string
+     */
     protected $photo_path = 'public_gallery/images/';
 
+    /**
+     *
+     */
     public function __construct()
     {
-        $thumb_width = \Settings::findSettings('gallery', 'thumb_width');
-        $thumb_height = \Settings::findSettings('gallery', 'thumb_height');
-        $photo_max_width = \Settings::findSettings('gallery', 'max_photo_width');
-        $photo_max_height = \Settings::findSettings('gallery', 'max_photo_height');
-
-        $this->thumb_width = (integer)$thumb_width;
-        $this->thumb_height = (integer)$thumb_height;
-        $this->photo_max_width = (integer)$photo_max_width;
-        $this->photo_max_height = (integer)$photo_max_height;
+        $this->setThumbWidth(\Setting::findSettings('gallery', 'thumb_width'));
+        $this->setThumbHeight(\Setting::findSettings('gallery', 'thumb_height'));
+        $this->setPhotoMaxWidth(\Setting::findSettings('gallery', 'max_photo_width'));
+        $this->setPhotoMaxHeight(\Setting::findSettings('gallery', 'max_photo_height'));
     }
 
+    /**
+     * @param $open
+     * @param $save_name
+     * @return bool
+     */
     public function thumbnail($open, $save_name)
     {
 
@@ -52,6 +77,11 @@ class Gallery {
 
     }
 
+    /**
+     * @param $open
+     * @param $save_name
+     * @return bool
+     */
     public function image($open, $save_name)
     {
 
@@ -81,6 +111,15 @@ class Gallery {
         }
     }
 
+    /**
+     * @param $open_name
+     * @param $save_name
+     * @param $x
+     * @param $y
+     * @param $width
+     * @param $height
+     * @return bool
+     */
     public function crop($open_name, $save_name, $x, $y, $width, $height)
     {
         $imagine = new \Imagine\Gd\Imagine();
@@ -103,6 +142,12 @@ class Gallery {
         }
     }
 
+    /**
+     * @param $open_name
+     * @param $save_name
+     * @param $rotate
+     * @return bool
+     */
     public function rotate($open_name, $save_name, $rotate)
     {
         $imagine = new \Imagine\Gd\Imagine();

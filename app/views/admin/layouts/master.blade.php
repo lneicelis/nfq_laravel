@@ -17,8 +17,8 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
 
-    <meta property="fb:app_id" content="{{ Settings::findSettings('gallery', 'facebook_app_id'); }}" />
-    <meta property="fb:admins" content="{{ Settings::findSettings('gallery', 'facebook_app_admins'); }}" />
+    <meta property="fb:app_id" content="{{ Setting::findSettings('gallery', 'facebook_app_id') }}" />
+    <meta property="fb:admins" content="{{ Setting::findSettings('gallery', 'facebook_app_admins') }}" />
 
     @section('head-css')
         @include('admin.resources.css')
@@ -55,7 +55,7 @@
 				<ul class="nav ace-nav">
 					<li class="light-blue">
 						<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-							<img class="nav-user-photo" src="{{ URL::asset('assets/avatars/user.jpg') }}" alt="Jason's Photo" />
+							<img class="nav-user-photo" src="{{ URL::asset('public_users/thumbs/' . $thumb) }}" alt="" />
                                 <span class="user-info">
                                     <small>Welcome,</small> {{ Sentry::getUser()->first_name }}
                                 </span>
@@ -110,7 +110,7 @@
                     <div class="nav-search" id="nav-search">
                         <form method="get" class="form-search" action="{{ URL::action('SearchController@getSearch') }}">
                             <span class="input-icon">
-                                <input name="search" type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off">
+                                <input name="search" type="text" placeholder="Search ..." class="nav-search-input" autocomplete="off" value="{{{ Input::get('search') }}}">
                                 <i class="icon-search nav-search-icon"></i>
                             </span>
                         </form>
@@ -146,6 +146,15 @@
 	@yield('scripts')
 
     @include('admin.resources.gritter')
-
+    <script type="text/javascript">
+        var queries = {{ json_encode(DB::getQueryLog()) }};
+        console.log('/****************************** Database Queries ******************************/');
+        console.log(' ');
+        queries.forEach(function(query) {
+            console.log('   ' + query.time + ' | ' + query.query + ' | ' + query.bindings[0]);
+        });
+        console.log(' ');
+        console.log('/****************************** End Queries ***********************************/');
+    </script>
 </body>
 </html>

@@ -65,21 +65,54 @@ li.active-result{
     margin-left:-100px;
     cursor: default;
 }
-.fb-photo-likes{
-    padding-right: 20px;
+.photo-info-container{
     position: absolute!important;
-    top: 10px;
+    top: 0px;
     right: 0px;
-    max-height: 40px;
-}
-.fb-photo-comments{
-    padding-right: 20px;
-    position: absolute!important;
-    top: 50px;
-    right: 0px;
-    max-height: 520px;
+    width: 275px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+.photo-info{
+    margin: 5px 0px;
+    padding-right: 10px;
+}
+.photo-info-img{
+    float: left;
+    padding: 2px;
+    border-radius: 100%;
+    border: 1px solid rgb(170, 170, 170);
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    max-width: none;
+    width: 48px;
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
+}
+.photo-info-user{
+    float: left;
+    padding:  5px 0 0 10px;
+}
+.photo-description{
+    float: left;
+    padding: 0px 5px;
+    width: 250px;
+    overflow: hidden;
+}
+.photo-info-date{
+     float: left;
+     padding:  0px 10px;
+ }
+.fb-photo-likes{
+    margin: 5px 0px;
+    padding-right: 10px;
+}
+.fb-photo-comments{
+    margin: 5px 0px;
+    padding-right: 10px;
 }
 .photo-tag-container-wrapper{
     height: 640px;

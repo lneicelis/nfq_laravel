@@ -9,7 +9,7 @@ class SettingsController extends \BaseController{
     }
     public function getGallerySettings()
     {
-        $settings = Settings::getByType('gallery')->get();
+        $settings = Setting::getByType('gallery')->get();
 
         foreach($settings as $row)
         {
@@ -40,7 +40,7 @@ class SettingsController extends \BaseController{
                 $type = Input::get('type');
                 $name = Input::get('name');
 
-                Settings::where('type', '=', $type)->where('name', '=', $name)
+                Setting::where('type', '=', $type)->where('name', '=', $name)
                     ->update(array('value' => Input::get('value')));;
 
                 return Response::make('ok', 200);

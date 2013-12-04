@@ -1,6 +1,6 @@
 <?php
 
-class Settings extends Eloquent{
+class Setting extends Eloquent{
 
     protected $table = 'settings';
 

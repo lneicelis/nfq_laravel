@@ -1,1 +1,5 @@
-gallery/*
+public_gallery/*
+!public_gallery/thumbs/default.jpg
+public_users/*
+!public_users/pictures/profile.jpg
+!public_users/thumbs/profile.jpg
