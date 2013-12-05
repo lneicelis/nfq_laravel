@@ -2,7 +2,8 @@
 
 class AlbumsController extends \BaseController {
 
-    public function __construct(){
+    public function __construct()
+    {
         Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
     }
