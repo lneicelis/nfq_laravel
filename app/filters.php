@@ -13,6 +13,8 @@
 
 App::before(function($request)
 {
+    Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
+
     View::composer('admin.layouts.master', function($view)
     {
         $thumb = UserInfo::findById(Sentry::getUser()->id)->picture;

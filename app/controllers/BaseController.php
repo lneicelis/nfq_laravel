@@ -1,12 +1,6 @@
 <?php
 
 class BaseController extends Controller {
-
-    public function __construct()
-    {
-        Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
-    }
-
 	/**
 	 * Setup the layout used by the controller.
 	 *
