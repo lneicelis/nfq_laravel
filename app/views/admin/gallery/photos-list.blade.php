@@ -38,32 +38,32 @@
     </p>
     @endif
 
-    <div class="col-sm-4 pull-right transfer-div" style="display: none">
-        <div class="widget-box">
-            <div class="widget-header header-color-blue2">
-                <h4 class="lighter smaller">Choose album
-                    <select class="chosen-select select-album">
-                        <option value="">&nbsp;</option>
-                        @foreach($albums as $album)
-                        <option value="{{ $album->id }}">{{ $album->title }}</option>
-                        @endforeach
-                    </select>
-                </h4>
-            </div>
+    <div class="col-xs-12 no-padding-left">
+        <div class="col-sm-4 pull-right transfer-div" style="display: none">
+            <div class="widget-box">
+                <div class="widget-header header-color-blue2">
+                    <h4 class="lighter smaller">Choose album
+                        <select class="chosen-select select-album">
+                            <option value="">&nbsp;</option>
+                            @foreach($albums as $album)
+                            <option value="{{ $album->id }}">{{ $album->title }}</option>
+                            @endforeach
+                        </select>
+                    </h4>
+                </div>
 
-            <div class="widget-body">
-                <div class="widget-main padding-8">
+                <div class="widget-body">
+                    <div class="widget-main padding-8">
 
-                    <ul id="album-to" class="ace-thumbnails" style="min-height: 345px">
+                        <ul id="album-to" class="ace-thumbnails" style="min-height: 345px">
 
-                    </ul>
-                    <div class="clearfix"></div>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-xs-12 no-padding-left">
         <ul class="ace-thumbnails" id="album-from">
         @foreach ($photos as $photo)
 
@@ -219,6 +219,7 @@
                     $(document).find('.slimScrollDiv').wrap('<div class="photo-info-container"></div>')
 
                     $(document).find(".cboxPhoto").attr("magger-photo-id", $(this).attr("data-photo-id"))
+                        .css({margin:"0px"})
                         .maggerShow({getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}"});
 
                     $(".photo-tag-container-wrapper").remove();

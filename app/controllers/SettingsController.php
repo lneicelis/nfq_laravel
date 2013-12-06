@@ -4,11 +4,17 @@ class SettingsController extends \BaseController{
 
     public function __construct()
     {
-        Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
         Breadcrumbs::addCrumb('Settings', URL::action('SettingsController@getGallerySettings'));
     }
+
+    /**
+     * @return mixed
+     */
     public function getGallerySettings()
     {
+        /**
+         * select * from `settings` where `type` = 'gallery'
+         */
         $settings = Setting::getByType('gallery')->get();
 
         foreach($settings as $row)
@@ -16,12 +22,14 @@ class SettingsController extends \BaseController{
             $gallery_settings[$row->name] = $row->value;
         }
 
-
         return View::make('admin.settings.gallery-settings',array(
             'settings' => $gallery_settings
         ));
     }
 
+    /**
+     * @return mixed
+     */
     public function postGallerySettings()
     {
 
@@ -39,7 +47,9 @@ class SettingsController extends \BaseController{
             {
                 $type = Input::get('type');
                 $name = Input::get('name');
-
+                /**
+                 * update `settings` set `value` = ?, `updated_at` = ? where `type` = ? and `name` = ?
+                 */
                 Setting::where('type', '=', $type)->where('name', '=', $name)
                     ->update(array('value' => Input::get('value')));;
 

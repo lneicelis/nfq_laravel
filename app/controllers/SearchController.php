@@ -4,7 +4,6 @@ class SearchController extends \BaseController {
 
     public function __construct()
     {
-        Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
         Breadcrumbs::addCrumb('Search', URL::action('SearchController@getSearch'));
     }
 
@@ -48,6 +47,9 @@ class SearchController extends \BaseController {
     {
         $needle = str_replace('#', '', $tag);
         $photo_ids = array();
+        /**
+         * select * from `photo_tags` where `title` like ? limit 15
+         */
         foreach(PhotoTag::search($needle) as $tag)
         {
             $photo_ids[] = $tag->photo_id;
@@ -62,6 +64,10 @@ class SearchController extends \BaseController {
     protected function searchUsers($needle)
     {
         $needle = '%' . $needle . '%';
+        /**
+         * select count(*) as aggregate from `users` inner join `users_info` on `users_info`.`user_id` = `users`.`id`
+         * where CONCAT(users.first_name, " ", users.last_name) like ?
+         */
         $users = DB::table('users')
             ->whereRaw('CONCAT(users.first_name, " ", users.last_name) like ?', array($needle))
             ->join('users_info', 'users_info.user_id', '=', 'users.id')

@@ -4,10 +4,6 @@ use Illuminate\Support\Facades\Redirect;
 
 class UsersController extends \BaseController {
 
-    public function __construct(){
-        Breadcrumbs::addCrumb('Home', URL::action('DashboardController@getHome'));
-    }
-
     /**
      * User logout
      * @return mixed
@@ -165,7 +161,7 @@ class UsersController extends \BaseController {
                 UserInfo::create(array('user_id' => $user->id));
 
                 //Setting first user to admin
-                if(count(Sentry::all()) === 0){
+                if(count(Sentry::all()) === 1){
                     $user->addGroup(Sentry::findGroupByName('Administrator'));
                 }else{
                     $user->addGroup(Sentry::findGroupByName('User'));

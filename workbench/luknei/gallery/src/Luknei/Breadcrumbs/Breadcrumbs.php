@@ -22,7 +22,7 @@ class Breadcrumbs {
 	 *
 	 * @var string
 	 */
-	protected $divider = '>';
+	protected $divider = '';
 
 	/**
 	 * The class constructor. Accepts an optional array of breadcrumbs, and an
@@ -37,7 +37,7 @@ class Breadcrumbs {
 
 		if (!$cssClasses)
 		{
-			$this->setCssClasses('breadcrumbs');
+			$this->setCssClasses('breadcrumb');
 		}
 		else
 		{

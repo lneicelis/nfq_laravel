@@ -15,9 +15,6 @@ App::before(function($request)
 {
     View::composer('admin.layouts.master', function($view)
     {
-        Breadcrumbs::setDivider('');
-        Breadcrumbs::addCssClasses('breadcrumb');
-
         $thumb = UserInfo::findById(Sentry::getUser()->id)->picture;
         $view->with('thumb', $thumb);
     });

@@ -4,11 +4,14 @@ class AlbumsController extends \BaseController {
 
     public function __construct()
     {
-        Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
     }
 
-	public function index($user_id = null)
+    /**
+     * @param null $user_id
+     * @return mixed
+     */
+    public function index($user_id = null)
 	{
 
         if($user_id === null)
@@ -16,6 +19,12 @@ class AlbumsController extends \BaseController {
 
         $response['default_cover'] = 'default.jpg';
         $response['can_edit'] = $this->canAccess('admin', false, $user_id);
+        /**
+         * select `albums`.`id`, `albums`.`user_id`, `albums`.`title`, `albums`.`description`, `albums`.`no_photos`, `albums`.`no_comments`, `albums`.`no_likes`, `photos`.`file_name` from `albums`
+         * left join `photos` on `albums`.`cover_photo` = `photos`.`id`
+         * where `albums`.`user_id` = ?
+         * limit 15
+         */
         $response['albums'] = $albums = DB::table('albums')
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
             ->where('albums.user_id', '=', $user_id)
@@ -24,7 +33,7 @@ class AlbumsController extends \BaseController {
 
         if(empty($albums))
         {
-            $alerts[] = array(
+            $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
                 'message' => 'There is no albums in the gallery.');
@@ -34,7 +43,10 @@ class AlbumsController extends \BaseController {
 	}
 
 
-	public function postCreate()
+    /**
+     * @return mixed
+     */
+    public function postCreate()
 	{
         $validator = Validator::make(
             Input::get(),
@@ -50,6 +62,9 @@ class AlbumsController extends \BaseController {
         {
             $user_id = Sentry::getUser()->id;
 
+            /**
+             * insert into `albums` (`user_id`, `title`, `description`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?)
+             */
             Album::create(array(
                 'user_id' => $user_id,
                 'title' => Input::get('title'),
@@ -71,19 +86,23 @@ class AlbumsController extends \BaseController {
         return Redirect::back()->with(array('gritter' => $gritter));
 	}
 
-	public function postSetCover()
+    /**
+     * @return mixed
+     */
+    public function postSetCover()
 	{
-        $user_id = Sentry::getUser()->id;
-        $photo_id = Input::get('id');
-
-        $photo = DB::table('photos')
-            ->select('photos.file_name', 'albums.id')
-            ->leftJoin('albums', 'photos.album_id', '=', 'albums.id')
-            ->whereRaw('albums.user_id = ? AND photos.id = ?', array($user_id, $photo_id))
-            ->first();
+        /**
+         * select * from `photos` where `id` = ? limit 1
+         */
+        $photo = Photo::find(Input::get('id'));
+        $this->canAccess('admin', true, $photo->album->user_id);
 
         if(!empty($photo)){
-            Album::find($photo->id)->update(array('cover_photo' => $photo_id));
+            /**
+             * select * from `albums` where `albums`.`id` = ? limit 1
+             * update `albums` set `cover_photo` = ?, `updated_at` = ? where `id` = ?
+             */
+            $photo->album->update(array('cover_photo' => $photo->id));
 
             $gritter = array(
                 'type' => 'success',
@@ -91,18 +110,29 @@ class AlbumsController extends \BaseController {
                 'message' => 'Cover photo have been changed.');
             return Response::json($gritter, 200);
         }
+
         return Response::json(404);
 	}
 
-	public function show($id)
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function show($id)
 	{
         $user = Sentry::getUser();
-
+        /**
+         * select * from `albums` where `id` = ? limit 1
+         */
         $response['album'] = $album = Album::find($id);
-
-        //albums where user can move photos
+        /**
+         * select * from `albums` where `id` != ? and `user_id` = ?
+         */
         $response['albums'] = $albums = Album::where('id', '!=', $id)
             ->where('user_id', '=', $user->id)->get();
+        /**
+         * select * from `photos` where `album_id` = ? limit 15 offset 0
+         */
         $response['photos'] = Photo::where('album_id', '=', $album->id)->paginate(15);
         $response['can_edit'] = $this->canAccess('admin', false, $album->user_id);
 
@@ -113,7 +143,7 @@ class AlbumsController extends \BaseController {
 
         if($album->photos->count() === 0)
         {
-            $alerts[] = array(
+            $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
                 'message' => 'The album is empty.');
@@ -124,14 +154,20 @@ class AlbumsController extends \BaseController {
         return View::make('admin.gallery.photos-list', $response);
 	}
 
-	public function postEdit()
+    /**
+     * @return mixed
+     */
+    public function postEdit()
 	{
 
 		$album_id = Input::get('album_id');
 		$title = Input::get('title');
 		$description = Input::get('description');
-        $user_id = Sentry::getUser()->id;
-        $album = Album::whereRaw('id = ? AND user_id = ?', array($album_id, $user_id))->first();
+        /**
+         * select * from `albums` where `id` = ? limit 1
+         */
+        $album = Album::where('id', '=', $album_id)->first();
+        $this->canAccess('admin', true, $album->user_id);
 
         if(!empty($album))
         {
@@ -149,6 +185,9 @@ class AlbumsController extends \BaseController {
                 )
             );
             if(!$validator->fails()){
+                /**
+                 * update `albums` set `title` = ?, `updated_at` = ? where `id` = ?
+                 */
                 $album->title = $title;
                 $album->description = $description;
                 $album->save();
@@ -164,19 +203,22 @@ class AlbumsController extends \BaseController {
                     'message' => $validator->messages()->first());
             }
         }
+
         return Redirect::back()->with(array('gritter' => $gritter));
 	}
 
 
-	public function destroy($album_id)
+    /**
+     * @param $album_id
+     * @return mixed
+     */
+    public function destroy($album_id)
 	{
+        /**
+         * select * from `albums` where `id` = ? limit 1
+         */
         $album = Album::find($album_id);
         $this->canAccess('admin', true, $album->user_id);
-
-        if($album === null)
-        {
-            App::abort(404);
-        }
 
         $photos = $album->photos;
 
@@ -194,6 +236,9 @@ class AlbumsController extends \BaseController {
         return Redirect::back();
 	}
 
+    /**
+     *
+     */
     public function postComment()
     {
 
@@ -215,6 +260,9 @@ class AlbumsController extends \BaseController {
         }
     }
 
+    /**
+     *
+     */
     public function postLike()
     {
 

@@ -1,10 +1,16 @@
 <?php
 class PhotoTagsController extends \BaseController {
 
+    /**
+     * @return mixed
+     */
     public function postGet()
     {
         if(Input::has('photo_id'))
         {
+            /**
+             * select `id` as `tag-id`, `title` as `tag-title`, `description` as `tag-description`, `color` as `tag-color`, `size` as `tag-size`, `url`, `x`, `y` from `photo_tags` where `photo_id` = ?
+             */
             $tags = PhotoTag::where('photo_id', '=',Input::get('photo_id'))
                 ->get(array('id as tag-id', 'title as tag-title', 'description as tag-description', 'color as tag-color', 'size as tag-size', 'url', 'x', 'y'));
 
@@ -12,6 +18,9 @@ class PhotoTagsController extends \BaseController {
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function postCreate()
     {
         $tag = Input::Get();
@@ -27,6 +36,9 @@ class PhotoTagsController extends \BaseController {
 
         if(!$validator->fails())
         {
+            /**
+             * insert into `photo_tags` (`photo_id`, `title`, `description`, `url`, `color`, `size`, `x`, `y`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             */
             $photo_tag = new PhotoTag();
             $photo_tag->photo_id = $tag['photo-id'];
             $photo_tag->title = $tag['tag-title'];
@@ -37,7 +49,9 @@ class PhotoTagsController extends \BaseController {
             $photo_tag->x = $tag['x'];
             $photo_tag->y = $tag['y'];
             $photo_tag->save();
-
+            /**
+             * update `photos` set `no_tags` = `no_tags` + 1, `updated_at` = ? where `id` = ?
+             */
             $photo_tag->photo->increment('no_tags');
 
             $tag['tag-id'] = $photo_tag->id;
@@ -50,6 +64,9 @@ class PhotoTagsController extends \BaseController {
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function postEdit()
     {
 
@@ -66,8 +83,10 @@ class PhotoTagsController extends \BaseController {
 
         if(!$validator->fails())
         {
+            /**
+             * update `photo_tags` set `description` = ?, `url` = ?, `x` = ?, `y` = ?, `updated_at` = ? where `id` = ?
+             */
             $photo_tag = PhotoTag::find($tag['tag-id']);
-            $photo_tag->photo_id = $tag['photo-id'];
             $photo_tag->title = $tag['tag-title'];
             $photo_tag->description = $tag['tag-description'];
             $photo_tag->url = $tag['tag-url'];
@@ -84,12 +103,23 @@ class PhotoTagsController extends \BaseController {
             return Response::json($error,404);
         }
     }
+
+    /**
+     * @return mixed
+     */
     public function postDelete()
     {
+        /**
+         * select * from `photo_tags` where `id` = ? limit 1
+         */
         $tag = PhotoTag::find(Input::get('tag-id'));
-
+        /**
+         * delete from `photo_tags` where `id` = ?
+         */
         $affected_rows = $tag->delete();
-
+        /**
+         * update `photos` set `no_tags` = `no_tags` - 1, `updated_at` = ? where `id` = ?
+         */
         $tag->photo->decrement('no_tags');
 
         if($affected_rows){

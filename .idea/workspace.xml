@@ -43,19 +43,25 @@
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\swutG1euR8jEEga0.jpg" afterPath="" />
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\tUf6OFmVoMNyePwo.jpg" afterPath="" />
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\xzNs6ejzVS806YMn.jpg" afterPath="" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\.gitignore" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/.gitignore" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\.travis.yml" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/.travis.yml" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\composer.json" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/composer.json" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\phpunit.xml" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/phpunit.xml" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\src\Luknei\Gallery\Facades\Gallery.php" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Gallery/Facades/Gallery.php" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\src\Luknei\Gallery\Gallery.php" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Gallery/Gallery.php" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\src\Luknei\Gallery\GalleryServiceProvider.php" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Gallery/GalleryServiceProvider.php" />
-      <change type="MOVED" beforePath="C:\wamp\www\laravel\workbench\luknei\admin\tests\.gitkeep" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/tests/.gitkeep" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Album.php" afterPath="$PROJECT_DIR$/app/models/Album.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/AlbumsController.php" afterPath="$PROJECT_DIR$/app/controllers/AlbumsController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/BaseController.php" afterPath="$PROJECT_DIR$/app/controllers/BaseController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Breadcrumbs.php" afterPath="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Breadcrumbs.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/DashboardController.php" afterPath="$PROJECT_DIR$/app/controllers/DashboardController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/PhotoTag.php" afterPath="$PROJECT_DIR$/app/models/PhotoTag.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/PhotoTagsController.php" afterPath="$PROJECT_DIR$/app/controllers/PhotoTagsController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/PhotosController.php" afterPath="$PROJECT_DIR$/app/controllers/PhotosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/SearchController.php" afterPath="$PROJECT_DIR$/app/controllers/SearchController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/SettingsController.php" afterPath="$PROJECT_DIR$/app/controllers/SettingsController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/UsersController.php" afterPath="$PROJECT_DIR$/app/controllers/UsersController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/app.php" afterPath="$PROJECT_DIR$/app/config/app.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/css/custom.css" afterPath="$PROJECT_DIR$/public/assets/css/custom.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/filters.php" afterPath="$PROJECT_DIR$/app/filters.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/admin/dashboard/home.blade.php" afterPath="$PROJECT_DIR$/app/views/admin/dashboard/home.blade.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/admin/layouts/master.blade.php" afterPath="$PROJECT_DIR$/app/views/admin/layouts/master.blade.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/css/photo-tagger.css" afterPath="$PROJECT_DIR$/public/assets/css/photo-tagger.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/admin/gallery/photos-list.blade.php" afterPath="$PROJECT_DIR$/app/views/admin/gallery/photos-list.blade.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/routes.php" afterPath="$PROJECT_DIR$/app/routes.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="laravel.iws" />
@@ -79,55 +85,66 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="composer.json" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/composer.json">
+      <file leaf-file-name="routes.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/routes.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="35" selection-start="248" selection-end="248" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="782">
+            <state line="42" column="35" selection-start="1290" selection-end="1290" vertical-scroll-proportion="-1.3076923" vertical-offset="680" max-vertical-offset="3485">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/config/app.php">
+      <file leaf-file-name="photos-list.blade.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/admin/gallery/photos-list.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="186" column="37" selection-start="7592" selection-end="7592" vertical-scroll-proportion="-13.115385" vertical-offset="2821" max-vertical-offset="3366">
+            <state line="221" column="36" selection-start="10640" selection-end="10640" vertical-scroll-proportion="-16.307692" vertical-offset="3333" max-vertical-offset="4522">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Breadcrumbs.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Breadcrumbs.php">
+      <file leaf-file-name="home.blade.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/admin/dashboard/home.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="22" selection-start="22" selection-end="22" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="7395">
+            <state line="156" column="116" selection-start="7734" selection-end="7734" vertical-scroll-proportion="0.3548387" vertical-offset="2933" max-vertical-offset="4200">
+              <folding>
+                <element signature="n#style#0;n#li#0;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="photo-tagger.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/assets/css/photo-tagger.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="27" selection-start="273" selection-end="273" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Breadcrumbs.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Facades/Breadcrumbs.php">
+      <file leaf-file-name="custom.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/assets/css/custom.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="22" selection-start="22" selection-end="22" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="340">
+            <state line="120" column="19" selection-start="2031" selection-end="2031" vertical-scroll-proportion="-15.0" vertical-offset="1590" max-vertical-offset="2159">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="composer.json" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/composer.json">
+      <file leaf-file-name="custom.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/assets/js/custom.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="58" selection-start="470" selection-end="470" vertical-scroll-proportion="0.5302752" vertical-offset="0" max-vertical-offset="545">
+            <state line="20" column="8" selection-start="486" selection-end="912" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1360">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BreadcrumbsServiceProvider.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/BreadcrumbsServiceProvider.php">
+      <file leaf-file-name="PhotosController.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/PhotosController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="26" selection-start="230" selection-end="230" vertical-scroll-proportion="-7.1923075" vertical-offset="0" max-vertical-offset="612">
+            <state line="314" column="95" selection-start="10103" selection-end="10103" vertical-scroll-proportion="-7.923077" vertical-offset="5132" max-vertical-offset="6545">
               <folding />
             </state>
           </provider>
@@ -151,22 +168,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/public/.gitignore" />
-        <option value="$PROJECT_DIR$/workbench/luknei/admin/composer.json" />
-        <option value="$PROJECT_DIR$/vendor/luknei/gallery/src/Luknei/Gallery/Gallery.php" />
-        <option value="$PROJECT_DIR$/app/models/Album.php" />
-        <option value="$PROJECT_DIR$/vendor/creitive/breadcrumbs/src/Creitive/Breadcrumbs/Breadcrumbs.php" />
-        <option value="$PROJECT_DIR$/app/controllers/BaseController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/UsersController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/DashboardController.php" />
         <option value="$PROJECT_DIR$/app/controllers/AlbumsController.php" />
-        <option value="$PROJECT_DIR$/app/filters.php" />
-        <option value="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Breadcrumbs.php" />
-        <option value="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Facades/Breadcrumbs.php" />
-        <option value="$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/BreadcrumbsServiceProvider.php" />
-        <option value="$PROJECT_DIR$/vendor/luknei/gallery/composer.json" />
-        <option value="$PROJECT_DIR$/vendor/luknei/gallery/src/Luknei/Breadcrumbs/BreadcrumbsServiceProvider.php" />
-        <option value="$PROJECT_DIR$/app/config/app.php" />
         <option value="$PROJECT_DIR$/composer.json" />
-        <option value="$PROJECT_DIR$/workbench/luknei/gallery/composer.json" />
+        <option value="$PROJECT_DIR$/app/config/app.php" />
+        <option value="$PROJECT_DIR$/app/controllers/PhotoTagsController.php" />
+        <option value="$PROJECT_DIR$/app/models/PhotoTag.php" />
+        <option value="$PROJECT_DIR$/app/controllers/SearchController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/SettingsController.php" />
+        <option value="$PROJECT_DIR$/app/views/admin/layouts/master.blade.php" />
+        <option value="$PROJECT_DIR$/app/controllers/PhotosController.php" />
+        <option value="$PROJECT_DIR$/app/routes.php" />
+        <option value="$PROJECT_DIR$/app/views/admin/gallery/photos-list.blade.php" />
+        <option value="$PROJECT_DIR$/public/assets/css/photo-tagger.css" />
+        <option value="$PROJECT_DIR$/public/assets/css/custom.css" />
+        <option value="$PROJECT_DIR$/app/views/admin/dashboard/home.blade.php" />
       </list>
     </option>
   </component>
@@ -231,15 +248,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="workbench" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="luknei" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gallery" />
+              <option name="myItemId" value="public" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -253,23 +262,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="workbench" />
+              <option name="myItemId" value="public" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="luknei" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gallery" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Luknei" />
+              <option name="myItemId" value="assets" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -283,7 +280,15 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="vendor" />
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="assets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -315,7 +320,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
+              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -404,18 +409,18 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3284091" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31477273" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28295454" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2494382" sideWeight="0.81670535" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25749466" sideWeight="0.6852273" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35492507" sideWeight="0.7170454" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43295455" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31477273" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28295454" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -442,87 +447,117 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/Album.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/DashboardController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="571">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/BaseController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="5" selection-start="252" selection-end="252" vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="799">
+        <state line="29" column="43" selection-start="679" selection-end="679" vertical-scroll-proportion="0.8467433" vertical-offset="51" max-vertical-offset="1122">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/AlbumsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="4" selection-start="95" selection-end="95" vertical-scroll-proportion="-3.2692308" vertical-offset="0" max-vertical-offset="4131">
+        <state line="6" column="77" selection-start="138" selection-end="174" vertical-scroll-proportion="-6.981707" vertical-offset="3537" max-vertical-offset="4947">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/filters.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/PhotoTagsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="39" selection-start="588" selection-end="588" vertical-scroll-proportion="-5.8846154" vertical-offset="0" max-vertical-offset="1921">
+        <state line="72" column="25" selection-start="2311" selection-end="2311" vertical-scroll-proportion="0.14007781" vertical-offset="1152" max-vertical-offset="2329">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Gallery/GalleryServiceProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/models/PhotoTag.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
+        <state line="16" column="59" selection-start="386" selection-end="386" vertical-scroll-proportion="0.516129" vertical-offset="0" max-vertical-offset="527">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/laravel/framework/composer.json">
+    <entry file="file://$PROJECT_DIR$/app/controllers/SearchController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="37.26923" vertical-offset="969" max-vertical-offset="1632">
+        <state line="66" column="11" selection-start="1671" selection-end="1671" vertical-scroll-proportion="0.5483871" vertical-offset="833" max-vertical-offset="1411">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Facades/Breadcrumbs.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/UsersController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="22" selection-start="22" selection-end="22" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="518">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/config/app.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="186" column="37" selection-start="7592" selection-end="7592" vertical-scroll-proportion="-13.115385" vertical-offset="2821" max-vertical-offset="3366">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/BreadcrumbsServiceProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="26" selection-start="230" selection-end="230" vertical-scroll-proportion="-7.1923075" vertical-offset="0" max-vertical-offset="612">
+        <state line="163" column="45" selection-start="4936" selection-end="4936" vertical-scroll-proportion="5.2580647" vertical-offset="0" max-vertical-offset="10183">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/composer.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="35" selection-start="248" selection-end="248" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="782">
+        <state line="9" column="49" selection-start="299" selection-end="299" vertical-scroll-proportion="0.29032257" vertical-offset="0" max-vertical-offset="765">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/src/Luknei/Breadcrumbs/Breadcrumbs.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/SettingsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="22" selection-start="22" selection-end="22" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7395">
+        <state line="50" column="87" selection-start="1271" selection-end="1271" vertical-scroll-proportion="1.6129032" vertical-offset="0" max-vertical-offset="1139">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/workbench/luknei/gallery/composer.json">
+    <entry file="file://$PROJECT_DIR$/app/views/admin/layouts/master.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="58" selection-start="470" selection-end="470" vertical-scroll-proportion="0.5302752" vertical-offset="0" max-vertical-offset="545">
+        <state line="147" column="39" selection-start="4697" selection-end="4697" vertical-scroll-proportion="0.70233464" vertical-offset="2138" max-vertical-offset="2652">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/assets/js/custom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="8" selection-start="486" selection-end="912" vertical-scroll-proportion="0.0" vertical-offset="98" max-vertical-offset="1360">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/PhotosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="314" column="95" selection-start="10103" selection-end="10103" vertical-scroll-proportion="-7.923077" vertical-offset="5132" max-vertical-offset="6545">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="35" selection-start="1290" selection-end="1290" vertical-scroll-proportion="-1.3076923" vertical-offset="680" max-vertical-offset="3485">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/admin/gallery/photos-list.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="221" column="36" selection-start="10640" selection-end="10640" vertical-scroll-proportion="-16.307692" vertical-offset="3333" max-vertical-offset="4522">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/assets/css/custom.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="19" selection-start="2031" selection-end="2031" vertical-scroll-proportion="-15.0" vertical-offset="1590" max-vertical-offset="2159">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/assets/css/photo-tagger.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="27" selection-start="273" selection-end="273" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/admin/dashboard/home.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="156" column="116" selection-start="7734" selection-end="7734" vertical-scroll-proportion="0.3548387" vertical-offset="2933" max-vertical-offset="4200">
+          <folding>
+            <element signature="n#style#0;n#li#0;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

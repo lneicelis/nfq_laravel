@@ -40,7 +40,7 @@ Route::post('/user/edit', array(
     'before' => 'admin|csrf',
     'uses' => 'UsersController@postUserEdit'));
 
-Route::get('/user/profile/{user_id}', array(
+Route::get('/user/profile/{user_id?}', array(
     'before' => 'auth',
     'uses' => 'UsersController@getProfile'));
 
@@ -178,6 +178,10 @@ Route::post('photo/status', array(
     'before' => 'auth',
     'uses' => 'PhotosController@postStatus'));
 
+Route::post('photo/get-info', array(
+    'before' => 'auth',
+    'uses' => 'PhotosController@postGetPhotoInfo'));
+
 /**
  * Photo tags routes
  */
@@ -193,7 +197,3 @@ Route::post('photo-tag/edit', array(
 Route::post('photo-tag/delete', array(
     'before' => 'auth',
     'uses' => 'PhotoTagsController@postDelete'));
-
-Route::get('test/{album_id}/{user_id}', array(
-    'uses' => 'PhotosController@canEdit'
-));

@@ -8,13 +8,15 @@ class PhotosController extends \BaseController {
      */
     public function getUpload($album_id)
     {
+        /**
+         * select * from `albums` where `id` = ? limit 1
+         */
         $album = Album::find($album_id);
         $this->canAccess('admin', true, $album->user_id);
 
         $response['album_id'] = $album->id;
 
-        Breadcrumbs::addCrumb('Home', URL::action('AlbumsController@index'));
-        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
+        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index', array('user_id' => $album->user_id)));
         Breadcrumbs::addCrumb($album->title . ' album', URL::action('AlbumsController@show', array('id' => $album_id)));
         Breadcrumbs::addCrumb('Upload photos');
 
@@ -87,6 +89,9 @@ class PhotosController extends \BaseController {
      */
     public function edit()
 	{
+        /**
+         * select * from `photos` where `id` = ? limit 1
+         */
         $photo = Photo::find(Input::get('photo_id'));
         $this->canAccess('admin', true, $photo->album->user_id);
 
@@ -100,7 +105,9 @@ class PhotosController extends \BaseController {
             )
         );
         if(!$validator->fails()){
-
+            /**
+             * update `photos` set `description` = ?, `updated_at` = ? where `id` = ?
+             */
             $photo->description = Input::get('description');
             $photo->save();
 
@@ -114,6 +121,7 @@ class PhotosController extends \BaseController {
                 'title' => 'Error',
                 'message' => $validator->messages()->first());
         }
+
         return Redirect::back()->with(array('gritter' => $gritter));
     }
 
@@ -133,10 +141,18 @@ class PhotosController extends \BaseController {
         unlink(public_path('public_gallery/thumbs/' . $photo->file_name));
 
         //delete photo and its tags records in database
+        /**
+         * delete from `photos` where `id` = ?
+         */
         Photo::destroy($photo->id);
+        /**
+         * from `photo_tags` where `photo_id` = ?
+         */
         PhotoTag::where('photo_id', '=', $photo->id)->delete();
-
-        //decrease the number of photos in the album
+        /**
+         * decrease the number of photos in the album
+         * update `albums` set `no_photos` = `no_photos` - 1, `updated_at` = ? where `id` = ?
+         */
         $photo->album->decrement('no_photos');
 
         $gritter = array(
@@ -155,15 +171,11 @@ class PhotosController extends \BaseController {
     public function getPhotos(){
 
         $id = Input::get('id');
-
-        $album = Album::find($id);
-
-        if($album === null)
-        {
-            App::abort(404);
-        }
-
-        $photos = Photo::where('album_id', '=', $id)->get();
+        /**
+         * select * from `albums` where `id` = ? limit 1
+         * select * from `photos` where `photos`.`album_id` = ?
+         */
+        $photos = Album::find($id)->photos;
 
         return Response::json($photos, 200);
     }
@@ -179,9 +191,17 @@ class PhotosController extends \BaseController {
         //check if this user can access this function => admin or owner
         $this->canAccess('admin', true, $album->user_id);
         $this->canAccess('admin', true, $photo->album->user_id);
-
+        /**
+         * update `albums` set `no_photos` = `no_photos` - 1, `updated_at` = ? where `id` = ?
+         */
         $photo->album->decrement('no_photos');
+        /**
+         * update `albums` set `no_photos` = `no_photos` + 1, `updated_at` = ? where `id` = ?
+         */
         $album->increment('no_photos');
+        /**
+         * update `photos` set `album_id` = '3', `updated_at` = '2013-12-06 10:53:28' where `id` = '8'
+         */
         $affectedRows = Photo::where('id', '=', $photo->id)->update(array('album_id' => $album->id));
 
         if($affectedRows > 0){
@@ -196,6 +216,9 @@ class PhotosController extends \BaseController {
      */
     public function postCrop()
     {
+        /**
+         * select * from `photos` where `id` = ? limit 1
+         */
         $photo = Photo::find(Input::get('photo-id'));
 
         //check if this user can access this function => admin or owner
@@ -223,7 +246,9 @@ class PhotosController extends \BaseController {
                 $new_file_name = str_random(16) . substr($photo->file_name, 16);
 
                 if(Gallery::crop($photo->file_name, $new_file_name, $x, $y, $w, $h)){
-
+                    /**
+                     * insert into `photos` (`album_id`, `description`, `file_name`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?)
+                     */
                     Photo::create(array(
                         'album_id' => $photo->album_id,
                         'description' => $photo->description,
@@ -257,7 +282,9 @@ class PhotosController extends \BaseController {
     public function postRotate($direction)
     {
         $rotate = ($direction === "left") ? 270 : 90;
-
+        /**
+         * select * from `photos` where `id` = ? limit 1
+         */
         $photo = Photo::find(Input::get('id'));
 
         //check if this user can access this function => admin or owner
@@ -278,11 +305,29 @@ class PhotosController extends \BaseController {
         return Response::json(404);
     }
 
+    public function postGetPhotoInfo()
+    {
+        if(Input::has('id'))
+        {
+            $photo = Photo::find(Input::get('id'));
+            $photoArray = $photo->toArray();
+            $userArray = User::where('users.id', '=', $photo->album->user->id)
+                ->select('users.id', 'users.first_name', 'users.last_name', 'users_info.picture')
+                ->join('users_info', 'users_info.user_id', '=', 'users.id')
+                ->first()->toArray();
+
+            return Response::json(array('photo' => $photoArray, 'user' => $userArray), 200);
+        }
+    }
+
     /**
      * @return mixed
      */
     public function postStatus()
     {
+        /**
+         * select * from `photos` where `id` = ? limit 1
+         */
         $photo = Photo::find(Input::get('id'));
 
         //check if this user can access this function => admin or owner
@@ -290,10 +335,12 @@ class PhotosController extends \BaseController {
 
         if(!empty($photo->id))
         {
+
             $status = ($photo->status === 1) ? 0 : 1;
-
+            /**
+             * update `photos` set `status` = ?, `updated_at` = ? where `id` = ?
+             */
             $photo->status = $status;
-
             $photo->save();
 
             $gritter = array(

@@ -14,6 +14,6 @@ class PhotoTag extends Eloquent{
     public function scopeSearch($query, $tag)
     {
         $tag = '%' . $tag . '%';
-        return $query->where('title', 'like', $tag)->take(5)->get();
+        return $query->where('title', 'like', $tag)->take(15)->get();
     }
 } 

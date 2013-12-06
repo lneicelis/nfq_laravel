@@ -116,7 +116,8 @@ return array(
         'Cartalyst\Sentry\SentryServiceProvider',
 
         'Luknei\Breadcrumbs\BreadcrumbsServiceProvider',
-        'Luknei\Gallery\GalleryServiceProvider'
+        'Luknei\Gallery\GalleryServiceProvider',
+        'Barryvdh\Debugbar\ServiceProvider'
 
 	),
 
