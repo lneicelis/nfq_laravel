@@ -35,9 +35,12 @@ class PhotosController extends \BaseController {
         if (Input::hasFile('file'))
         {
             $file = Input::file('file');
+            $size = (integer)Setting::findSettings('gallery', 'max_file_size');
+            $mimes = Setting::findSettings('gallery', 'mimes');
+            $restrictions = 'mimes:' . $mimes . '|max:' . $size;
             $validator = Validator::make(
                 array('file' => $file),
-                array('file' => 'mimes:jpeg,bmp,png|max:2048')
+                array('file' => $restrictions)
             );
 
             if ($validator->fails())
@@ -59,7 +62,7 @@ class PhotosController extends \BaseController {
                     $description = substr($file->getClientOriginalName(), 0, strlen($file->getClientOriginalName()) - strlen($file->getClientOriginalExtension()) - 1);
                     Photo::create(array(
                         'album_id' => $album_id,
-                        'description' => $description,
+                        'description' => e($description),
                         'file_name' => $new_file_name));
 
                     Album::find($album_id)->increment('no_photos');
@@ -108,7 +111,7 @@ class PhotosController extends \BaseController {
             /**
              * update `photos` set `description` = ?, `updated_at` = ? where `id` = ?
              */
-            $photo->description = Input::get('description');
+            $photo->description = e(Input::get('description'));
             $photo->save();
 
             $gritter[] = array(
@@ -146,9 +149,17 @@ class PhotosController extends \BaseController {
          */
         Photo::destroy($photo->id);
         /**
-         * from `photo_tags` where `photo_id` = ?
+         * delete from `photo_tags` where `photo_id` = ?
          */
         PhotoTag::where('photo_id', '=', $photo->id)->delete();
+        /**
+         * delete from `likes` where `type` = ? and `obj_id` = ?
+         */
+        Like::where('type', '=', 'photo')->where('obj_id', '=', $photo->id)->delete();
+        /**
+         * delete from `comments` where `type` = ? and `obj_id` = ?
+         */
+        Comment::where('type', '=', 'photo')->where('obj_id', '=', $photo->id)->delete();
         /**
          * decrease the number of photos in the album
          * update `albums` set `no_photos` = `no_photos` - 1, `updated_at` = ? where `id` = ?
@@ -310,7 +321,17 @@ class PhotosController extends \BaseController {
         if(Input::has('id'))
         {
             $photo = Photo::find(Input::get('id'));
+            /**
+             * update `photos` set `no_views` = `no_views` + 1, `updated_at` = ? where `id` = ?
+             */
+            $photo->increment('no_views');
+            /**
+             * select * from `photos` where `id` = ? limit 1
+             */
             $photoArray = $photo->toArray();
+            /**
+             * select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users_info`.`picture` from `users` inner join `users_info` on `users_info`.`user_id` = `users`.`id` where `users`.`id` = ? limit 1
+             */
             $userArray = User::where('users.id', '=', $photo->album->user->id)
                 ->select('users.id', 'users.first_name', 'users.last_name', 'users_info.picture')
                 ->join('users_info', 'users_info.user_id', '=', 'users.id')
@@ -353,28 +374,4 @@ class PhotosController extends \BaseController {
         return Response::json(404);
     }
 
-    /**
-     *
-     */
-    public function postComment()
-    {
-
-        $validator = Validator::make(
-            Input::get(),
-            array(
-                'action' => 'required',
-                'photo_id' => 'required|integer'
-            )
-        );
-        if(!$validator->fails())
-        {
-            $photo = Photo::find(Input::get('photo_id'));
-
-            if(Input::get('action') == 'increment')
-                $photo->increment('no_comments');
-
-            if(Input::get('action') == 'decrement')
-                $photo->decrement('no_comments');
-        }
-    }
 }

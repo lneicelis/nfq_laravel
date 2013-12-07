@@ -24,6 +24,14 @@ class DashboardController extends \BaseController
          * select * from `users`
          */
         $response['users'] = Sentry::all();
+        /**
+         *
+         */
+        $response['comments'] = Comment::all();
+        /**
+         *
+         */
+        $response['likes'] = Comment::all();
 
         $response['admins'] = Sentry::findAllUsersWithAccess(array('admin'));
 
@@ -45,7 +53,7 @@ class DashboardController extends \BaseController
             ->leftJoin('photos', 'albums.cover_photo', '=', 'photos.id')
             ->where('albums.created_at', '>', $start)
             ->select('albums.id', 'albums.user_id', 'albums.title', 'albums.description', 'albums.no_photos', 'albums.no_comments', 'albums.no_likes', 'photos.file_name')
-            ->orderBy('no_comments', 'DESC')->take(5)->get();
+            ->orderBy('no_likes', 'DESC')->take(5)->get();
         /**
          * select * from `photos` where `photos`.`created_at` > ? order by `no_comments` desc limit 5
          */

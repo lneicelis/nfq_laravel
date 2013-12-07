@@ -47,7 +47,7 @@
                             <span class="label-holder">
                                 <span class="label label-danger arrowed-in">
                                     {{ $album->no_likes }}
-                                    <i class="icon-facebook"></i>
+                                    <i class="icon-heart"></i>
                                 </span>
                             </span>
                     </div>

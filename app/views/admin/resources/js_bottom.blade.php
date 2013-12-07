@@ -8,7 +8,7 @@
 
 <!--[if IE]>
 <script type="text/javascript">
-    window.jQuery || document.write("<script src=\"{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}\"></script>");
+    window.jQuery || document.write("<script src='{{ URL::asset('assets/js/jquery-1.10.2.min.js') }}'>"+"<"+"/script>");
 </script>
 <![endif]-->
 
@@ -25,4 +25,3 @@
 <script src="{{ URL::asset('assets/js/custom.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.gritter.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/admin/gritter.custom.js') }}"></script>
-<script src="{{ URL::asset('assets/js/admin/fb-events.js') }}"></script>

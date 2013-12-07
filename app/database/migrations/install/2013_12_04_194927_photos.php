@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class Albums extends Migration {
+class Photos extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -11,22 +11,19 @@ class Albums extends Migration {
 	 */
 	public function up()
 	{
-        Schema::create('albums', function($table)
+        Schema::create('photos', function($table)
         {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->string('title', 100);
-            $table->string('short_description', 100)->nullable();
+            $table->integer('album_id');
+            $table->string('file_name', 22);
             $table->string('description', 255)->nullable();
-            $table->string('location', 100)->nullable();
-            $table->integer('no_photos')->default(0);
+            $table->integer('status')->default(1);
+            $table->integer('no_tags')->default(0);
             $table->integer('no_comments')->default(0);
             $table->integer('no_likes')->default(0);
             $table->integer('no_views')->default(0);
-            $table->integer('cover_photo')->nullable();
+            $table->timestamp('shoot_date')->nullable();
             $table->timestamps();
-
-            $table->index('user_id');
         });
 	}
 
@@ -37,7 +34,7 @@ class Albums extends Migration {
 	 */
 	public function down()
 	{
-        Schema::drop('albums');
+        Schema::drop('photos');
 	}
 
 }

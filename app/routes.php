@@ -99,7 +99,7 @@ Route::get('/dashboard', array(
     'before' => 'admin',
     'uses' => 'DashboardController@getDashboard'));
 
-Route::get('/home', array(
+Route::get('/', array(
     'before' => 'auth',
     'uses' => 'DashboardController@getHome'));
 
@@ -197,3 +197,26 @@ Route::post('photo-tag/edit', array(
 Route::post('photo-tag/delete', array(
     'before' => 'auth',
     'uses' => 'PhotoTagsController@postDelete'));
+
+/**
+ * Comments routes
+ */
+Route::post('comment/post', array(
+    'before' => 'auth',
+    'uses' => 'CommentsController@postComment'));
+
+Route::post('comment/show-comments', array(
+    'before' => 'auth',
+    'uses' => 'CommentsController@postShowComments'));
+
+/**
+ * Likes routes
+ */
+
+Route::post('/likes/get', array(
+    'before' => 'auth',
+    'uses' => 'LikesController@postGetLikes'));
+
+Route::post('/likes/add', array(
+    'before' => 'auth',
+    'uses' => 'LikesController@postLike'));

@@ -248,6 +248,7 @@
     <script src="{{{ URL::asset('assets/js/x-editable/bootstrap-editable.min.js') }}}"></script>
     <script src="{{{ URL::asset('assets/js/x-editable/ace-editable.min.js') }}}"></script>
     <script src="{{{ URL::asset('assets/js/jquery.maskedinput.min.js') }}}"></script>
+    <script src="{{ URL::asset('assets/js/fuelux/fuelux.spinner.min.js') }}"></script>
 
 <script type="text/javascript">
     jQuery(function($) {
@@ -260,7 +261,7 @@
 
         //editables
 
-        $('#first_name, #last_name, #age, #website, #skype').editable({
+        $('#first_name, #last_name, #website, #skype').editable({
             type: 'text',
             pk: "{{{ $user->id }}}",
             url: "{{{ URL::action('UsersController@postUpdateProfile') }}}",
@@ -272,6 +273,19 @@
 
             }
         });
+
+        $("#age").editable({
+            type: 'spinner',
+            pk: "{{{ $user->id }}}",
+            url: "{{{ URL::action('UsersController@postUpdateProfile') }}}",
+            title: 'Your age',
+            params: {
+                _token: "{{ csrf_token() }}",
+            },
+            spinner : {
+                min : 1, max:99, step:1
+            }
+        })
 
         $('#profile_picture').ace_file_input({
             no_file:'Change profile picture',

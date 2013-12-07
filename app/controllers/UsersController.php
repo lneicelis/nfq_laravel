@@ -152,8 +152,8 @@ class UsersController extends \BaseController {
             {
                 // Let's register a user.
                 $user = Sentry::register(array(
-                    'first_name'    => Input::get('first_name'),
-                    'last_name'    => Input::get('last_name'),
+                    'first_name'    => e(Input::get('first_name')),
+                    'last_name'    => e(Input::get('last_name')),
                     'email'    => Input::get('email'),
                     'password' => Input::get('password'),
                 ), true);
@@ -490,6 +490,26 @@ class UsersController extends \BaseController {
     }
 
     /**
+     * @return mixed
+     */
+    public function getUsersList()
+    {
+        /**
+         * select `users`.`id`, `users`.`email`, `users`.`first_name`, `users`.`last_name`, `users`.`created_at`, `users`.`activated_at`, `groups`.`name` from `users`
+         * left join `users_groups` on `users`.`id` = `users_groups`.`user_id`
+         * left join `groups` on `users_groups`.`group_id` = `groups`.`id`
+         */
+        $response['users'] = DB::table('users')
+            ->join('users_info', 'users_info.user_id', '=', 'users.id')
+            ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
+                'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->get();
+
+        Breadcrumbs::addCrumb('Users list', URL::action('UsersController@getUsersList'));
+
+        return View::make('admin.users.users-list', $response);
+    }
+
+    /**
      *
      */
     public function postFollow()
@@ -522,33 +542,32 @@ class UsersController extends \BaseController {
     }
 
     /**
-     * @return mixed
-     */
-    public function getUsersList()
-    {
-        $response['users'] = DB::table('users')
-            ->join('users_info', 'users_info.user_id', '=', 'users.id')
-            ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
-                'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->get();
-
-        Breadcrumbs::addCrumb('Users list', URL::action('UsersController@getUsersList'));
-
-        return View::make('admin.users.users-list', $response);
-    }
-
-    /**
      * @param $user_id
      * @return mixed
      */
     public function getFollowing($user_id)
     {
         $response['user'] = $user = Sentry::findUserById($user_id);
-        $response['users'] = DB::table('users')
+        /**
+         * select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`activated_at`, `users`.`last_login`, `users_info`.`age`, `users_info`.`skype`, `users_info`.`website`, `users_info`.`picture` from `users`
+         * inner join `users_follow` on `users_follow`.`following_id` = `users`.`id`
+         * inner join `users_info` on `users_info`.`user_id` = `users`.`id`
+         * where `users_follow`.`follower_id` = ? limit 30 offset 0
+         */
+        $response['users'] = $users = DB::table('users')
             ->where('users_follow.follower_id', '=', $user_id)
             ->join('users_follow', 'users_follow.following_id', '=', 'users.id')
             ->join('users_info', 'users_info.user_id', '=', 'users.id')
             ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
                 'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->paginate(30);
+
+        if(count($users) === 0)
+        {
+            $response['alerts'][] = array(
+                'type' => 'info',
+                'title' => 'Info',
+                'message' => $user->first_name . ' ' . $user->last_name . ' is not following no one.');
+        }
 
         Breadcrumbs::addCrumb($user->first_name . ' ' . $user->last_name, URL::action('UsersController@getProfile', array('user_id' => $user->id)));
         Breadcrumbs::addCrumb('Following');
@@ -562,12 +581,26 @@ class UsersController extends \BaseController {
     public function getFollowers($user_id)
     {
         $response['user'] = $user = Sentry::findUserById($user_id);
-        $response['users'] = DB::table('users')
+        /**
+         * select `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`activated_at`, `users`.`last_login`, `users_info`.`age`, `users_info`.`skype`, `users_info`.`website`, `users_info`.`picture` from `users`
+         * inner join `users_follow` on `users_follow`.`follower_id` = `users`.`id`
+         * inner join `users_info` on `users_info`.`user_id` = `users`.`id`
+         * where `users_follow`.`following_id` = ? limit 30 offset 0
+         */
+        $response['users'] = $users = DB::table('users')
             ->where('users_follow.following_id', '=', $user_id)
             ->join('users_follow', 'users_follow.follower_id', '=', 'users.id')
             ->join('users_info', 'users_info.user_id', '=', 'users.id')
             ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
                 'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->paginate(30);
+
+        if(count($users) === 0)
+        {
+            $response['alerts'][] = array(
+                'type' => 'info',
+                'title' => 'Info',
+                'message' => 'There are no followers yet.');
+        }
 
         Breadcrumbs::addCrumb($user->first_name . ' ' . $user->last_name, URL::action('UsersController@getProfile', array('user_id' => $user->id)));
         Breadcrumbs::addCrumb('Followers');

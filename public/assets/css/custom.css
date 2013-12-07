@@ -72,9 +72,10 @@ li.active-result{
     width: 275px;
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: rgb(245, 245, 245);
 }
 .photo-info{
-    margin: 5px 0px;
+    margin: 5px 5px;
     padding-right: 10px;
 }
 .photo-info-img{
@@ -106,17 +107,20 @@ li.active-result{
      float: left;
      padding:  0px 10px;
  }
-.fb-photo-likes{
-    margin: 5px 0px;
-    padding-right: 10px;
+.photo-likes{
+    padding: 0px 10px;
 }
-.fb-photo-comments{
-    margin: 5px 0px;
-    padding-right: 10px;
+.photo-comments{
+    margin: 0px;
+    padding-right: 5px;
 }
 .photo-tag-container-wrapper{
     height: 640px;
     width: 640px;
     text-align: center;
     line-height: 530px;
+}
+.album-likes{
+    margin-left: 10px;
+    margin-top: 10px;
 }

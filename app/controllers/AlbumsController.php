@@ -2,11 +2,6 @@
 
 class AlbumsController extends \BaseController {
 
-    public function __construct()
-    {
-        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
-    }
-
     /**
      * @param null $user_id
      * @return mixed
@@ -31,13 +26,14 @@ class AlbumsController extends \BaseController {
             ->select('albums.id', 'albums.user_id', 'albums.title', 'albums.description', 'albums.no_photos', 'albums.no_comments', 'albums.no_likes', 'photos.file_name')
             ->paginate(15);
 
-        if(empty($albums))
+        if(count($albums) == 0)
         {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
-                'message' => 'There is no albums in the gallery.');
+                'message' => 'There are no albums in the gallery.');
         }
+        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
 
         return View::make('admin.gallery.albums-list', $response);
 	}
@@ -67,8 +63,8 @@ class AlbumsController extends \BaseController {
              */
             Album::create(array(
                 'user_id' => $user_id,
-                'title' => Input::get('title'),
-                'description' => Input::get('description')
+                'title' => e(Input::get('title')),
+                'description' => e(Input::get('description'))
             ));
 
             $gritter[] = array(
@@ -134,6 +130,11 @@ class AlbumsController extends \BaseController {
          * select * from `photos` where `album_id` = ? limit 15 offset 0
          */
         $response['photos'] = Photo::where('album_id', '=', $album->id)->paginate(15);
+        /**
+         * update `albums` set `no_views` = `no_views` + 1, `updated_at` = ? where `id` = ?
+         */
+        $album->increment('no_views');
+
         $response['can_edit'] = $this->canAccess('admin', false, $album->user_id);
 
         if($album === null)
@@ -149,6 +150,7 @@ class AlbumsController extends \BaseController {
                 'message' => 'The album is empty.');
         }
 
+        Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index', array('user_id' => $album->user_id)));
         Breadcrumbs::addCrumb($album->title . ' album');
 
         return View::make('admin.gallery.photos-list', $response);
@@ -173,8 +175,8 @@ class AlbumsController extends \BaseController {
         {
             $validator = Validator::make(
                 array(
-                    'title' => $title,
-                    'description' => $description,
+                    'title' => e($title),
+                    'description' => e($description),
                 ),
                 array(
                     'title' => 'required|max:100',
@@ -230,57 +232,15 @@ class AlbumsController extends \BaseController {
                 $photos_controller->destroy($photo->id);
             }
         }
-
+        /**
+         * delete from `albums` where `id` = ?
+         */
         Album::destroy($album_id);
+        /**
+         * delete from `likes` where `type` = ? and `obj_id` = ?
+         */
+        Like::where('type', '=', 'album')->where('obj_id', '=', $album->id)->delete();
 
         return Redirect::back();
 	}
-
-    /**
-     *
-     */
-    public function postComment()
-    {
-
-        $validator = Validator::make(
-            Input::get(),
-            array(
-                'action' => 'required',
-                'd' => 'required|integer'
-            )
-        );
-        if(!$validator->fails())
-        {
-            $album = Album::find(Input::get('id'));
-
-            if(Input::get('action') == 'increment')
-                $album->increment('no_comments');
-            if(Input::get('action') == 'decrement')
-                $album->decrement('no_comments');
-        }
-    }
-
-    /**
-     *
-     */
-    public function postLike()
-    {
-
-        $validator = Validator::make(
-            Input::get(),
-            array(
-                'action' => 'required',
-                'id' => 'required|integer'
-            )
-        );
-        if(!$validator->fails())
-        {
-            $album = Album::find(Input::get('id'));
-
-            if(Input::get('action') == 'increment')
-                $album->increment('no_likes');
-            if(Input::get('action') == 'decrement')
-                $album->decrement('no_likes');
-        }
-    }
 }

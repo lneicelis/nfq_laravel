@@ -51,7 +51,7 @@ class SettingsController extends \BaseController{
                  * update `settings` set `value` = ?, `updated_at` = ? where `type` = ? and `name` = ?
                  */
                 Setting::where('type', '=', $type)->where('name', '=', $name)
-                    ->update(array('value' => Input::get('value')));;
+                    ->update(array('value' => e(Input::get('value'))));
 
                 return Response::make('ok', 200);
             }else{

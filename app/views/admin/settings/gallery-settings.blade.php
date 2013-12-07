@@ -30,49 +30,63 @@
             <tr>
                 <td class="center"> Facebook app id </td>
                 <td>
-                    <span class="editable" id="facebook_app_id">{{ $settings['facebook_app_id'] }}</span>
+                    <span class="editable editable-text" id="facebook_app_id">{{ $settings['facebook_app_id'] }}</span>
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Facebook app secret </td>
                 <td>
-                    <span class="editable" id="facebook_app_secret">{{ $settings['facebook_app_secret'] }}</span>
+                    <span class="editable editable-text" id="facebook_app_secret">{{ $settings['facebook_app_secret'] }}</span>
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Facebook app admins </td>
                 <td>
-                    <span class="editable" id="facebook_app_admins">{{ $settings['facebook_app_admins'] }}</span>
+                    <span class="editable editable-text" id="facebook_app_admins">{{ $settings['facebook_app_admins'] }}</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="center"> Max file size </td>
+                <td>
+                    <span class="editable editable-number" id="max_file_size">{{ $settings['max_file_size'] }}</span> Kb
+                </td>
+            </tr>
+
+            <tr>
+                <td class="center"> Allowed mime types (separated by colon) </td>
+                <td>
+                    <span class="editable editable-text" id="mimes">{{ $settings['mimes'] }}</span>
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Max photo width </td>
                 <td>
-                    <span class="editable" id="max_photo_width">{{ $settings['max_photo_width'] }}</span> px
+                    <span class="editable editable-number" id="max_photo_width">{{ $settings['max_photo_width'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Max photo height </td>
                 <td>
-                    <span class="editable" id="max_photo_height">{{ $settings['max_photo_height'] }}</span> px
+                    <span class="editable editable-number" id="max_photo_height">{{ $settings['max_photo_height'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Thumbnail width </td>
                 <td>
-                    <span class="editable" id="thumb_width">{{ $settings['thumb_width'] }}</span> px
+                    <span class="editable editable-number" id="thumb_width">{{ $settings['thumb_width'] }}</span> px
                 </td>
             </tr>
 
             <tr>
                 <td class="center"> Thumbnail height </td>
                 <td>
-                    <span class="editable" id="thumb_height">{{ $settings['thumb_height'] }}</span> px
+                    <span class="editable editable-number" id="thumb_height">{{ $settings['thumb_height'] }}</span> px
                 </td>
             </tr>
 
@@ -83,7 +97,7 @@
 @stop
 
 @section('scripts')
-
+<script src="{{ URL::asset('assets/js/fuelux/fuelux.spinner.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery-ui-1.10.3.custom.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.ui.touch-punch.min.js') }}"></script>
 <script src="{{ URL::asset('assets/js/bootbox.min.js') }}"></script>
@@ -104,11 +118,11 @@
 
         //editables
 
-        $('.editable').editable({
+        $('.editable-text').editable({
             type: 'text',
             pk: 1,
             url: "{{ URL::action('SettingsController@postGallerySettings') }}",
-            title: 'Enter username',
+            title: '',
             params: {
                 _token: "{{ csrf_token() }}",
                 type: "gallery"
@@ -117,6 +131,21 @@
 
             }
         });
+        $('.editable-number').editable({
+            type: 'spinner',
+            pk: 1,
+            url: "{{ URL::action('SettingsController@postGallerySettings') }}",
+            title: '',
+            params: {
+                _token: "{{ csrf_token() }}",
+                type: "gallery"
+            },
+            spinner : {
+                min : 1, max:100000, step:1
+            }
+        });
+        $(document).find('.spinner-input').removeClass('input-mini');
+
 
     });
 </script>

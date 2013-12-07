@@ -23,13 +23,11 @@ App::before(function($request)
 
     View::composer('admin.components.sidebar', function($view)
     {
-        $comments_url = 'https://developers.facebook.com/tools/comments?id=' . Setting::findSettings('gallery', 'facebook_app_id');
         if(Sentry::getUser()->hasAccess('admin'))
         {
             $meniu[] = array('icon' => 'icon-dashboard',    'title' => 'Dashboard',     'url' => URL::action('DashboardController@getDashboard'));
             $meniu[] = array('icon' => 'icon-group',        'title' => 'Users',         'url' => URL::action('UsersController@getUsers'));
             $meniu[] = array('icon' => 'icon-cogs',        'title' => 'Settings',         'url' => URL::action('SettingsController@getGallerySettings'));
-            $meniu[] = array('icon' => 'icon-comments',        'title' => 'Comments',         'url' => $comments_url );
         }
 
         if(Sentry::getUser()->hasAccess('user'))

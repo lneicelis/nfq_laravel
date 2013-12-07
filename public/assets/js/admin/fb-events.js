@@ -83,31 +83,64 @@ window.fbAsyncInit = function() {
     // Additional initialization code here
     FB.Event.subscribe('edge.create',
         function(href, widget) {
-            //alert('You liked the URL:');
-            setCookie('fblike', 'true', 30);
-            $(".loader-container").hide();
-            console.log(href);
-            console.log($(widget));
+            var type = $(widget).attr('data-type');
+            var url = $(widget).attr('data-href');
+
+            if(type == "photo"){
+                console.log(url);
+                sendData(url, "increment");
+            }
         }
     );
+
+    FB.Event.subscribe('edge.remove',
+        function(href, widget) {
+            var type = $(widget).attr('data-type');
+            var url = $(widget).attr('data-href');
+
+            if(type == "photo"){
+                sendData(url, "decrement");
+            }
+        }
+    );
+
     FB.Event.subscribe('comment.create',
         function(response) {
             //onCommentCreate(response.commentID,response.href); //Handle URL on function to store on database
-
-            console.log(response.commentID);
+            console.log(response.href);
         }
     );
 
-    function onCommentCreate(commentID,href){
-        $.ajax({
-            type: 'POST',
-            url: 'handlecomment.php',
-            data: {commentid:commentID,href:href},
-            success: function(result)
-            {
+    FB.Event.subscribe('comment.create',
+        function(response) {
+            //onCommentCreate(response.commentID,response.href); //Handle URL on function to store on database
+            console.log(response.href);
+        }
+    );
 
-            }
-        });
+    FB.Event.subscribe('comment.create',
+        function(response) {
+            //onCommentCreate(response.commentID,response.href); //Handle URL on function to store on database
+            console.log(response.href);
+        }
+    );
+
+    function sendData(url, action)
+    {
+        var data = {
+            token: token,
+            action: action
+        }
+        console.log(url);
+
+        $.ajax({
+            url: url,
+            type: "post",
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            async:true
+        })
+
     }
 };
 

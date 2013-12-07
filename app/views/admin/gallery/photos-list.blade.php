@@ -20,6 +20,7 @@
                 {{ $album->description }}
             </small>
         </h1>
+        <div class="album-likes" likes-type="album" likes-obj-id="{{ $album->id }}" likes-href="{{ URL::action('LikesController@postGetLikes') }}"></div>
     </div><!-- /.page-header -->
 @stop
 
@@ -89,7 +90,7 @@
                             <span class="label-holder">
                                 <span class="label label-success arrowed-in">
                                     {{ $photo->no_likes }}
-                                    <i class="icon-facebook"></i>
+                                    <i class="icon-heart"></i>
                                 </span>
                             </span>
                         </span>
@@ -142,10 +143,9 @@
         </ul>
     </div>
 
-    <div class="col-xs-12xs center">
+    <div class="col-xs-12 center">
         {{ $photos->links(); }}
     </div>
-
 
     @if($can_edit)
         @include('admin.gallery.modals.photo-edit-modal')
@@ -170,6 +170,8 @@
     <script src="{{ URL::asset('assets/js/admin/photo.transfer.js') }}"></script>
     <script src="{{ URL::asset('assets/js/admin/data-to-form.js') }}"></script>
     <script src="{{ URL::asset('assets/js/admin/photo-tag-widget.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/likes-widget.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/admin/comments-widget.js') }}"></script>
     <script src="{{ URL::asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
     <!-- inline scripts related to this page -->
@@ -181,6 +183,11 @@
 
 
         jQuery(function ($) {
+            $(document).find(".album-likes").showLikes({
+                postLikeUrl: "{{ URL::action('LikesController@postLike') }}",
+                message: " people like this album."
+            });
+
             var colorbox_params = {
                 reposition: true,
                 scalePhotos: true,
@@ -198,33 +205,54 @@
                     document.body.style.overflow = 'auto';
                 },
                 onComplete: function (a) {
-                    var created_at = $(this).attr('data-created')
-                    var description = $(this).attr('data-description')
-                    var container = $('<div></div>')
-                        .appendTo($(document).find("#cboxLoadedContent"));
-                    container.append('<div class="photo-info">' +
-                        '<a class="user" href="{{ URL::action("UsersController@getProfile", array("user_id" => $album->user_id)) }}">' +
-                            '<img class="photo-info-img" src="{{ URL::asset("public_users/thumbs/" . UserInfo::findById($album->user->id)->picture) }}">' +
-                            '<div class="photo-info-user"> {{ $album->user->first_name . " " . $album->user->last_name }}</div>' +
-                        '</a>' +
-                        '<div class="photo-info-date">' + created_at + '</div>' +
-                        '<div class="photo-description">' + description + '</div>' +
-                    '</div>');
-                    container.append('<div class="fb-photo-likes fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="260" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>')
-                    container.append('<div class="fb-photo-comments fb-comments" data-href="http://onlinetv.lt?id=6" data-width="260" data-num-posts="3"></div>');
-                     container.slimScroll({
-                        height: '560px',
-                        alwaysVisible : true
-                    }).addClass('photo-info-container');
-                    $(document).find('.slimScrollDiv').wrap('<div class="photo-info-container"></div>')
-
-                    $(document).find(".cboxPhoto").attr("magger-photo-id", $(this).attr("data-photo-id"))
-                        .css({margin:"0px"})
-                        .maggerShow({getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}"});
-
+                    $(document).find(".cboxPhoto").attr("magger-photo-id", $(this).attr("data-photo-id")).css({margin:"0px"})
+                        .maggerShow({getTagsUrl: "{{ URL::action('PhotoTagsController@postGet') }}"})
                     $(".photo-tag-container-wrapper").remove();
                     $(document).find(".photo-tag-container").wrap('<div class="photo-tag-container-wrapper"></div>');
-                    FB.XFBML.parse();
+
+                    var container = $('<div></div>')
+                        .appendTo($(document).find("#cboxLoadedContent"));
+                    container.slimScroll({
+                        height: '560px',
+                        alwaysVisible : false
+                    });
+                    $(document).find('.slimScrollDiv').wrap('<div class="photo-info-container"></div>');
+
+                    $.ajax({
+                        url: "{{ URL::Action('PhotosController@postGetPhotoInfo') }}",
+                        type: "post",
+                        data: {"id": $(this).attr('data-photo-id')},
+                        success: function(result,status,xhr){
+                            console.log(result);
+                            showPhotoInfo(result)
+                        },
+                        error:function(xhr,status,error){
+                            $.grit("error", "Error", "There was an error. The the request was denied. Please try again.");
+                        }
+                    });
+
+                    function showPhotoInfo(data){
+                        container.append('<div class="photo-info clearfix">' +
+                            '<a class="user" href="{{ URL::action("UsersController@getProfile") }}/' + data.user.id + '">' +
+                            '<img class="photo-info-img" src="{{ URL::asset("public_users/thumbs/") }}/' + data.user.picture + '">' +
+                            '<div class="photo-info-user">' + data.user.first_name + ' ' + data.user.last_name + '</div>' +
+                            '</a>' +
+                            '<div class="photo-info-date">' + data.photo.created_at + '</div>' +
+                            '<div class="photo-description">' + data.photo.description + '</div>' +
+                            '</div>');
+
+                        container.append('<div class="photo-likes" likes-type="photo" likes-obj-id="' + data.photo.id + '" likes-href="{{ URL::action("LikesController@postGetLikes") }}"></div>');
+                        $(document).find(".photo-likes").showLikes({
+                            postLikeUrl: "{{ URL::action('LikesController@postLike') }}"
+                        });
+
+                        container.append('<div class="photo-comments comments-holder" comments-type="photo" comments-obj-id="' + data.photo.id + '" comments-href="{{ URL::action("CommentsController@postShowComments") }}"></div>');
+                        $(document).find('.comments-holder').showComments({
+                            profileUrl: '{{ URL::action("UsersController@getProfile") }}/',
+                            profileImgUrl: '{{ URL::asset("public_users/thumbs/") }}/',
+                            formActionUrl: '{{ URL::action("CommentsController@postComment") }}'
+                        });
+                    }
                 }
             };
 

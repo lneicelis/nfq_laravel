@@ -41,9 +41,9 @@ class PhotoTagsController extends \BaseController {
              */
             $photo_tag = new PhotoTag();
             $photo_tag->photo_id = $tag['photo-id'];
-            $photo_tag->title = $tag['tag-title'];
-            $photo_tag->description = $tag['tag-description'];
-            $photo_tag->url = $tag['tag-url'];
+            $photo_tag->title = e($tag['tag-title']);
+            $photo_tag->description = e($tag['tag-description']);
+            $photo_tag->url = e($tag['tag-url']);
             $photo_tag->color = $tag['tag-color'];
             $photo_tag->size = $tag['tag-size'];
             $photo_tag->x = $tag['x'];
@@ -87,9 +87,9 @@ class PhotoTagsController extends \BaseController {
              * update `photo_tags` set `description` = ?, `url` = ?, `x` = ?, `y` = ?, `updated_at` = ? where `id` = ?
              */
             $photo_tag = PhotoTag::find($tag['tag-id']);
-            $photo_tag->title = $tag['tag-title'];
-            $photo_tag->description = $tag['tag-description'];
-            $photo_tag->url = $tag['tag-url'];
+            $photo_tag->title = e($tag['tag-title']);
+            $photo_tag->description = e($tag['tag-description']);
+            $photo_tag->url = e($tag['tag-url']);
             $photo_tag->color = $tag['tag-color'];
             $photo_tag->size = $tag['tag-size'];
             $photo_tag->x = $tag['x'];

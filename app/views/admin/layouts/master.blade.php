@@ -63,13 +63,6 @@
 						</a>
 						<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
 
-							<li>
-								<a href="#">
-									<i class="icon-user"></i>
-									Profile
-								</a>
-							</li>
-
 							<li class="divider"></li>
 
 							<li>

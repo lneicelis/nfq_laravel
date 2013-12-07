@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="infobox-data">
-                        <span class="infobox-data-number">7</span>
+                        <span class="infobox-data-number">{{ $comments->count() }}</span>
                         <div class="infobox-content">Comments</div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                         <i class="icon-facebook"></i>
                     </div>
                     <div class="infobox-data">
-                        <span class="infobox-data-number">7</span>
+                        <span class="infobox-data-number">{{ $likes->count() }}</span>
                         <div class="infobox-content">Likes</div>
                     </div>
 

@@ -25,6 +25,18 @@ class SettingsTableSeeder extends Seeder{
 
         Setting::create(array(
             'type' => 'gallery',
+            'name' => 'mimes',
+            'value' => 'jpeg,bmp,png'
+        ));
+
+        Setting::create(array(
+            'type' => 'gallery',
+            'name' => 'max_file_size',
+            'value' => '2048'
+        ));
+
+        Setting::create(array(
+            'type' => 'gallery',
             'name' => 'max_photo_height',
             'value' => '640'
         ));

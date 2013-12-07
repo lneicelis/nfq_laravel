@@ -43,16 +43,9 @@
                                             </span>
 
                                             <span class="label-holder">
-                                                <span class="label label-success">
-                                                    {{ $album->no_comments }}
-                                                    <i class="icon-comments"></i>
-                                                </span>
-                                            </span>
-
-                                            <span class="label-holder">
                                                 <span class="label label-danger arrowed-in">
                                                     {{ $album->no_likes }}
-                                                    <i class="icon-facebook"></i>
+                                                    <i class="icon-heart"></i>
                                                 </span>
                                             </span>
                                         </div>
@@ -102,7 +95,7 @@
                                                 <span class="label-holder">
                                                     <span class="label label-success arrowed-in">
                                                         {{ $photo->no_likes }}
-                                                        <i class="icon-facebook"></i>
+                                                        <i class="icon-heart"></i>
                                                     </span>
                                                 </span>
                                             </span>
@@ -123,6 +116,9 @@
 @stop
 
 @section('scripts')
+
+<!-- page specific plugin scripts -->
+
 <script src="{{ URL::asset('assets/js/jquery.colorbox-min.js') }}"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="{{ URL::asset('assets/js/chosen.jquery.min.js') }}"></script>
@@ -132,9 +128,17 @@
 <script src="{{ URL::asset('assets/js/admin/photo.transfer.js') }}"></script>
 <script src="{{ URL::asset('assets/js/admin/data-to-form.js') }}"></script>
 <script src="{{ URL::asset('assets/js/admin/photo-tag-widget.js') }}"></script>
+<script src="{{ URL::asset('assets/js/admin/likes-widget.js') }}"></script>
+<script src="{{ URL::asset('assets/js/admin/comments-widget.js') }}"></script>
 <script src="{{ URL::asset('assets/js/jquery.slimscroll.min.js') }}"></script>
 
+<!-- inline scripts related to this page -->
+
 <script type="text/javascript">
+    var $getPhotos = "{{ URL::action('PhotosController@getPhotos') }}";
+    var $postTransferUrl = "{{ URL::action('PhotosController@postTransfer') }}";
+    var $thumbsUrl = "{{ URL::asset('public_gallery/thumbs') }}";
+
 
     jQuery(function ($) {
         var colorbox_params = {
@@ -163,7 +167,7 @@
                     .appendTo($(document).find("#cboxLoadedContent"));
                 container.slimScroll({
                     height: '560px',
-                    alwaysVisible : true
+                    alwaysVisible : false
                 });
                 $(document).find('.slimScrollDiv').wrap('<div class="photo-info-container"></div>');
 
@@ -177,22 +181,30 @@
                     },
                     error:function(xhr,status,error){
                         $.grit("error", "Error", "There was an error. The the request was denied. Please try again.");
-                    }
+            }
                 });
-                function showPhotoInfo(data){
 
-                    container.append('<div class="photo-info">' +
+                function showPhotoInfo(data){
+                    container.append('<div class="photo-info clearfix">' +
                         '<a class="user" href="{{ URL::action("UsersController@getProfile") }}/' + data.user.id + '">' +
-                            '<img class="photo-info-img" src="{{ URL::asset("public_users/thumbs/") }}/' + data.user.picture + '">' +
-                            '<div class="photo-info-user">' + data.user.first_name + ' ' + data.user.last_name + '</div>' +
+                        '<img class="photo-info-img" src="{{ URL::asset("public_users/thumbs/") }}/' + data.user.picture + '">' +
+                        '<div class="photo-info-user">' + data.user.first_name + ' ' + data.user.last_name + '</div>' +
                         '</a>' +
                         '<div class="photo-info-date">' + data.photo.created_at + '</div>' +
                         '<div class="photo-description">' + data.photo.description + '</div>' +
-                    '</div>');
-                    container.append('<div class="fb-photo-likes fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-width="260" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>')
-                    container.append('<div class="fb-photo-comments fb-comments" data-href="http://onlinetv.lt?id=6" data-width="260" data-num-posts="3"></div>');
-                    FB.XFBML.parse();
+                        '</div>');
 
+                    container.append('<div class="photo-likes" likes-type="photo" likes-obj-id="' + data.photo.id + '" likes-href="{{ URL::action("LikesController@postGetLikes") }}"></div>');
+                    $(document).find(".photo-likes").showLikes({
+                        postLikeUrl: "{{ URL::action('LikesController@postLike') }}"
+                    });
+
+                    container.append('<div class="photo-comments comments-holder" comments-type="photo" comments-obj-id="' + data.photo.id + '" comments-href="{{ URL::action("CommentsController@postShowComments") }}"></div>');
+                    $(document).find('.comments-holder').showComments({
+                        profileUrl: '{{ URL::action("UsersController@getProfile") }}/',
+                        profileImgUrl: '{{ URL::asset("public_users/thumbs/") }}/',
+                        formActionUrl: '{{ URL::action("CommentsController@postComment") }}'
+                    });
                 }
             }
         };
