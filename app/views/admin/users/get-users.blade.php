@@ -57,7 +57,7 @@ jQuery(function($) {
             {name:'email',index:'email',width:90, editable:false},
             {name:'first_name',index:'first_name', width:70,editable: true,editoptions:{size:"20",maxlength:"255"}},
             {name:'last_name',index:'last_name', width:70, editable: true,editoptions:{size:"20",maxlength:"255"}},
-            {name:'name',index:'name', width:90, editable: true,edittype:"select",editoptions:{value:"user:User;moderator:Moderator;admin:Administrator"}},
+            {name:'name',index:'name', width:90, editable: true,edittype:"select",editoptions:{value:"user:User;Moderator:Moderator;Administrator:Administrator"}},
             {name:'created_at',index:'created_at',width:90, editable:false, sorttype:"date"},
             {name:'activated_at',index:'activated_at',width:90, editable:false, sorttype:"date"}
         ],

@@ -37,7 +37,7 @@ Route::get('/user/all', array(
     'uses' => 'UsersController@getUsers'));
 
 Route::post('/user/edit', array(
-    'before' => 'admin|csrf',
+    'before' => 'admin',
     'uses' => 'UsersController@postUserEdit'));
 
 Route::get('/user/profile/{user_id?}', array(

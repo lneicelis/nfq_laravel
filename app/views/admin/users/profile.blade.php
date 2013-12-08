@@ -111,7 +111,7 @@
         <div class="col-xs-12 col-sm-9">
             <div class="center">
                 <span class="btn btn-app btn-sm btn-light no-hover">
-                    <span class="line-height-1 bigger-170 blue"> 1,411 </span>
+                    <span class="line-height-1 bigger-170 blue"> {{{ (integer)$photos->sum('photos.no_views') }}} </span>
 
                     <br />
                     <span class="line-height-1 smaller-90"> Views </span>
@@ -280,7 +280,7 @@
             url: "{{{ URL::action('UsersController@postUpdateProfile') }}}",
             title: 'Your age',
             params: {
-                _token: "{{ csrf_token() }}",
+                _token: "{{ csrf_token() }}"
             },
             spinner : {
                 min : 1, max:99, step:1

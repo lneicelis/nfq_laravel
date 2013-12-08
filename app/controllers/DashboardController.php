@@ -15,7 +15,7 @@ class DashboardController extends \BaseController
         /**
          * select * from `photos`
          */
-        $response['photos'] = Photo::all();
+        $response['photos'] = DB::table('photos');
         /**
          * select * from `photo_tags`
          */
@@ -25,13 +25,13 @@ class DashboardController extends \BaseController
          */
         $response['users'] = Sentry::all();
         /**
-         *
+         * select * from `comments`
          */
         $response['comments'] = Comment::all();
         /**
-         *
+         * select * from `users`
          */
-        $response['likes'] = Comment::all();
+        $response['likes'] = Like::all();
 
         $response['admins'] = Sentry::findAllUsersWithAccess(array('admin'));
 

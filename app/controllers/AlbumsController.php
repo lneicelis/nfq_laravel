@@ -1,15 +1,15 @@
 <?php
 
-class AlbumsController extends \BaseController {
+class AlbumsController extends \BaseController
+{
 
     /**
      * @param null $user_id
      * @return mixed
      */
     public function index($user_id = null)
-	{
-
-        if($user_id === null)
+    {
+        if ($user_id === null)
             $user_id = Sentry::getUser()->id;
 
         $response['default_cover'] = 'default.jpg';
@@ -26,8 +26,7 @@ class AlbumsController extends \BaseController {
             ->select('albums.id', 'albums.user_id', 'albums.title', 'albums.description', 'albums.no_photos', 'albums.no_comments', 'albums.no_likes', 'photos.file_name')
             ->paginate(15);
 
-        if(count($albums) == 0)
-        {
+        if (count($albums) == 0) {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
@@ -36,14 +35,14 @@ class AlbumsController extends \BaseController {
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index'));
 
         return View::make('admin.gallery.albums-list', $response);
-	}
+    }
 
 
     /**
      * @return mixed
      */
     public function postCreate()
-	{
+    {
         $validator = Validator::make(
             Input::get(),
             array(
@@ -54,8 +53,7 @@ class AlbumsController extends \BaseController {
             )
         );
 
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             $user_id = Sentry::getUser()->id;
 
             /**
@@ -72,28 +70,28 @@ class AlbumsController extends \BaseController {
                 'title' => 'Success',
                 'message' => 'The album was successfully created.');
 
-        }else{
+        } else {
             $gritter[] = array(
                 'type' => 'error',
                 'title' => 'Error',
-                'message' =>  $validator->messages()->first());
+                'message' => $validator->messages()->first());
         }
 
         return Redirect::back()->with(array('gritter' => $gritter));
-	}
+    }
 
     /**
      * @return mixed
      */
     public function postSetCover()
-	{
+    {
         /**
          * select * from `photos` where `id` = ? limit 1
          */
         $photo = Photo::find(Input::get('id'));
         $this->canAccess('admin', true, $photo->album->user_id);
 
-        if(!empty($photo)){
+        if (!empty($photo)) {
             /**
              * select * from `albums` where `albums`.`id` = ? limit 1
              * update `albums` set `cover_photo` = ?, `updated_at` = ? where `id` = ?
@@ -108,14 +106,14 @@ class AlbumsController extends \BaseController {
         }
 
         return Response::json(404);
-	}
+    }
 
     /**
      * @param $id
      * @return mixed
      */
     public function show($id)
-	{
+    {
         $user = Sentry::getUser();
         /**
          * select * from `albums` where `id` = ? limit 1
@@ -137,13 +135,11 @@ class AlbumsController extends \BaseController {
 
         $response['can_edit'] = $this->canAccess('admin', false, $album->user_id);
 
-        if($album === null)
-        {
+        if ($album === null) {
             App::abort(404);
         }
 
-        if($album->photos->count() === 0)
-        {
+        if ($album->photos->count() === 0) {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
@@ -154,25 +150,24 @@ class AlbumsController extends \BaseController {
         Breadcrumbs::addCrumb($album->title . ' album');
 
         return View::make('admin.gallery.photos-list', $response);
-	}
+    }
 
     /**
      * @return mixed
      */
     public function postEdit()
-	{
+    {
 
-		$album_id = Input::get('album_id');
-		$title = Input::get('title');
-		$description = Input::get('description');
+        $album_id = Input::get('album_id');
+        $title = Input::get('title');
+        $description = Input::get('description');
         /**
          * select * from `albums` where `id` = ? limit 1
          */
         $album = Album::where('id', '=', $album_id)->first();
         $this->canAccess('admin', true, $album->user_id);
 
-        if(!empty($album))
-        {
+        if (!empty($album)) {
             $validator = Validator::make(
                 array(
                     'title' => e($title),
@@ -186,7 +181,7 @@ class AlbumsController extends \BaseController {
                     'required' => 'Enter new album title, please.'
                 )
             );
-            if(!$validator->fails()){
+            if (!$validator->fails()) {
                 /**
                  * update `albums` set `title` = ?, `updated_at` = ? where `id` = ?
                  */
@@ -198,7 +193,7 @@ class AlbumsController extends \BaseController {
                     'type' => 'success',
                     'title' => 'Success',
                     'message' => 'Album was successfully edited.');
-            }else{
+            } else {
                 $gritter[] = array(
                     'type' => 'error',
                     'title' => 'Error',
@@ -207,7 +202,7 @@ class AlbumsController extends \BaseController {
         }
 
         return Redirect::back()->with(array('gritter' => $gritter));
-	}
+    }
 
 
     /**
@@ -215,7 +210,7 @@ class AlbumsController extends \BaseController {
      * @return mixed
      */
     public function destroy($album_id)
-	{
+    {
         /**
          * select * from `albums` where `id` = ? limit 1
          */
@@ -224,11 +219,9 @@ class AlbumsController extends \BaseController {
 
         $photos = $album->photos;
 
-        if(!empty($photos))
-        {
+        if (!empty($photos)) {
             $photos_controller = new \PhotosController();
-            foreach($photos as $photo)
-            {
+            foreach ($photos as $photo) {
                 $photos_controller->destroy($photo->id);
             }
         }
@@ -242,5 +235,5 @@ class AlbumsController extends \BaseController {
         Like::where('type', '=', 'album')->where('obj_id', '=', $album->id)->delete();
 
         return Redirect::back();
-	}
+    }
 }

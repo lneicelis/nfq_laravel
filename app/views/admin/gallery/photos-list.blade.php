@@ -74,24 +74,30 @@
 
                     <div class="tags">
                         <span class="label-holder">
-                                <span class="label label-info arrowed">
-                                    {{ $photo->no_tags }}
-                                    <i class="icon-tags"></i>
-                                </span>
+                            <span class="label label-danger ">
+                                {{ $photo->no_views }}
+                                <i class="icon-eye-open"></i>
                             </span>
+                        </span>
 
-                            <span class="label-holder">
-                                <span class="label label-warning">
-                                    {{ $photo->no_comments }}
-                                    <i class="icon-comments"></i>
-                                </span>
+                        <span class="label-holder">
+                            <span class="label label-info arrowed">
+                                {{ $photo->no_tags }}
+                                <i class="icon-tags"></i>
                             </span>
+                        </span>
 
-                            <span class="label-holder">
-                                <span class="label label-success arrowed-in">
-                                    {{ $photo->no_likes }}
-                                    <i class="icon-heart"></i>
-                                </span>
+                        <span class="label-holder">
+                            <span class="label label-warning">
+                                {{ $photo->no_comments }}
+                                <i class="icon-comments"></i>
+                            </span>
+                        </span>
+
+                        <span class="label-holder">
+                            <span class="label label-success arrowed-in">
+                                {{ $photo->no_likes }}
+                                <i class="icon-heart"></i>
                             </span>
                         </span>
                     </div>

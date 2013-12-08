@@ -1,6 +1,7 @@
 <?php
 
-class SearchController extends \BaseController {
+class SearchController extends \BaseController
+{
 
     public function __construct()
     {
@@ -16,20 +17,19 @@ class SearchController extends \BaseController {
         $response['needle'] = $needle;
         $response['photos'] = null;
         $response['users'] = null;
+        $response['default_cover'] = 'default.jpg';
 
-        if(preg_match('/#/', $needle))
-        {
+        if (preg_match('/#/', $needle)) {
             $photo_ids = $this->searchTags($needle);
-            if(!empty($photo_ids))
-            {
+            if (!empty($photo_ids)) {
                 $response['photos'] = $photos = Photo::whereIn('id', $photo_ids)->paginate(15);
             }
-        }else{
+        } else {
             $response['users'] = $users = $this->searchUsers($needle);
+            $response['albums'] = $albums = $this->searchAlbums($needle);
         }
 
-        if(empty($photos) && empty($users))
-        {
+        if (empty($photos) && empty($users) && empty($albums)) {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
@@ -50,8 +50,7 @@ class SearchController extends \BaseController {
         /**
          * select * from `photo_tags` where `title` like ? limit 15
          */
-        foreach(PhotoTag::search($needle) as $tag)
-        {
+        foreach (PhotoTag::search($needle) as $tag) {
             $photo_ids[] = $tag->photo_id;
         }
         return $photo_ids;
@@ -74,5 +73,13 @@ class SearchController extends \BaseController {
             ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
                 'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->paginate(30);
         return $users;
+    }
+    protected function searchAlbums($needle)
+    {
+        $needle = '%' . $needle . '%';
+
+        $albums = DB::table('albums')->where('title', 'like', $needle)->paginate(15);
+
+        return $albums;
     }
 } 

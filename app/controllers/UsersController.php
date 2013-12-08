@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Redirect;
 
-class UsersController extends \BaseController {
+class UsersController extends \BaseController
+{
 
     /**
      * User logout
@@ -29,11 +30,11 @@ class UsersController extends \BaseController {
      * @return mixed
      */
     public function postLogin()
-	{
+    {
         // Set login credentials
         $response['email'] = Input::get('email');
         $credentials = array(
-            'email'    => Input::get('email'),
+            'email' => Input::get('email'),
             'password' => Input::get('password')
         );
 
@@ -51,66 +52,53 @@ class UsersController extends \BaseController {
             )
         );
 
-            if ($validator->fails())
-            {
+        if ($validator->fails()) {
+            $response['alerts'][] = array(
+                'type' => 'danger',
+                'title' => 'Error',
+                'message' => $validator->messages()->first());
+        } else {
+            try {
+
+                // Try to authenticate the user
+                $user = Sentry::authenticate($credentials, false);
+
+                if (Input::has('remember')) {
+                    Sentry::loginAndRemember($user);
+                }
+
+                return Redirect::action('DashboardController@getHome');
+            } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
                 $response['alerts'][] = array(
                     'type' => 'danger',
                     'title' => 'Error',
-                    'message' => $validator->messages()->first());
-            }else{
-                try
-                {
-
-                    // Try to authenticate the user
-                    $user = Sentry::authenticate($credentials, false);
-
-                    if(Input::has('remember'))
-                    {
-                        Sentry::loginAndRemember($user);
-                    }
-
-                    return Redirect::action('DashboardController@getHome');
-                }
-                catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
-                {
-                    $response['alerts'][] = array(
-                        'type' => 'danger',
-                        'title' => 'Error',
-                        'message' => trans('users.login_field'));
-                }
-                catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
-                {
-                    $response['alerts'][] = array(
-                        'type' => 'danger',
-                        'title' => 'Error',
-                        'message' => trans('users.login_field'));
-                }
-                catch (Cartalyst\Sentry\Users\WrongPasswordException $e)
-                {
-                    $response['alerts'][] = array(
-                        'type' => 'danger',
-                        'title' => 'Error',
-                        'message' => trans('users.wrong_password'));
-                }
-                catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
-                {
-                    $response['alerts'][] = array(
-                        'type' => 'danger',
-                        'title' => 'Error',
-                        'message' => trans('users.wrong_user'));
-                }
-                catch (Cartalyst\Sentry\Users\UserNotActivatedException $e)
-                {
-                    $response['alerts'][] = array(
-                        'type' => 'danger',
-                        'title' => 'Error',
-                        'message' => trans('users.user_not_activated'));
-                }
+                    'message' => trans('users.login_field'));
+            } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+                $response['alerts'][] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.login_field'));
+            } catch (Cartalyst\Sentry\Users\WrongPasswordException $e) {
+                $response['alerts'][] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.wrong_password'));
+            } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+                $response['alerts'][] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.wrong_user'));
+            } catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
+                $response['alerts'][] = array(
+                    'type' => 'danger',
+                    'title' => 'Error',
+                    'message' => trans('users.user_not_activated'));
             }
+        }
 
 
         return View::make('admin.users.login-form', $response);
-	}
+    }
 
     /**
      * @return mixed
@@ -125,7 +113,7 @@ class UsersController extends \BaseController {
      * @return mixed
      */
     public function postRegister()
-	{
+    {
         $response['input'] = Input::get();
 
         $validator = Validator::make(
@@ -139,31 +127,27 @@ class UsersController extends \BaseController {
             )
         );
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             $response['alerts'][] = array(
                 'type' => 'danger',
                 'title' => 'Error',
                 'message' => $validator->messages()->first());
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 // Let's register a user.
                 $user = Sentry::register(array(
-                    'first_name'    => e(Input::get('first_name')),
-                    'last_name'    => e(Input::get('last_name')),
-                    'email'    => Input::get('email'),
+                    'first_name' => e(Input::get('first_name')),
+                    'last_name' => e(Input::get('last_name')),
+                    'email' => Input::get('email'),
                     'password' => Input::get('password'),
                 ), true);
 
                 UserInfo::create(array('user_id' => $user->id));
 
                 //Setting first user to admin
-                if(count(Sentry::all()) === 1){
+                if (count(Sentry::all()) === 1) {
                     $user->addGroup(Sentry::findGroupByName('Administrator'));
-                }else{
+                } else {
                     $user->addGroup(Sentry::findGroupByName('User'));
                 }
 
@@ -172,23 +156,17 @@ class UsersController extends \BaseController {
                     'title' => 'Success',
                     'message' => trans('users.registration_ok'));
 
-            }
-            catch (Cartalyst\Sentry\Users\LoginRequiredException $e)
-            {
+            } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
                 $response['alerts'][] = array(
                     'type' => 'danger',
                     'title' => 'Error',
                     'message' => trans('users.login_field'));
-            }
-            catch (Cartalyst\Sentry\Users\PasswordRequiredException $e)
-            {
+            } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
                 $response['alerts'][] = array(
                     'type' => 'danger',
                     'title' => 'Error',
                     'message' => trans('users.password_field'));
-            }
-            catch (Cartalyst\Sentry\Users\UserExistsException $e)
-            {
+            } catch (Cartalyst\Sentry\Users\UserExistsException $e) {
                 $response['alerts'][] = array(
                     'type' => 'danger',
                     'title' => 'Error',
@@ -196,14 +174,14 @@ class UsersController extends \BaseController {
             }
         }
         return View::make('admin.users.registration-form', $response);
-	}
+    }
 
     /**
      * @param $user_id
      * @return mixed
      */
     public function getProfile($user_id)
-	{
+    {
         $response = array();
         $response['user'] = DB::table('users')
             ->where('users.id', '=', $user_id)
@@ -226,7 +204,7 @@ class UsersController extends \BaseController {
         Breadcrumbs::addCrumb('Profile', URL::action('UsersController@getProfile', array('user_id' => $user_id)));
 
         return View::make('admin.users.profile', $response);
-	}
+    }
 
     /**
      * @return mixed
@@ -241,17 +219,14 @@ class UsersController extends \BaseController {
             array('profile_picture' => 'required|mimes:jpeg,bmp,png|max:2048')
         );
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             $gritter[] = array(
                 'type' => 'error',
                 'title' => 'Error!',
                 'message' => $validator->messages()->first());
 
             return Redirect::back()->with(array('gritter' => $gritter));
-        }
-        else
-        {
+        } else {
             $new_file_name = $user->id . '.' . $file->getClientOriginalExtension();
             $tmp_file = $file->getRealPath();
 
@@ -266,8 +241,7 @@ class UsersController extends \BaseController {
             $create_thumb = $gallery->thumbnail($tmp_file, $new_file_name);
             $create_image = $gallery->image($tmp_file, $new_file_name);
 
-            if($create_thumb && $create_image)
-            {
+            if ($create_thumb && $create_image) {
                 UserInfo::findById($user->id)->update(array('picture' => $new_file_name));
 
                 $gritter[] = array(
@@ -276,9 +250,7 @@ class UsersController extends \BaseController {
                     'message' => 'Profile picture was successfully changed.');
 
                 return Redirect::back()->with(array('gritter' => $gritter));
-            }
-            else
-            {
+            } else {
                 $gritter[] = array(
                     'type' => 'error',
                     'title' => 'Error!',
@@ -302,11 +274,10 @@ class UsersController extends \BaseController {
      * @return mixed
      */
     public function postResetPassword()
-	{
+    {
         $email = Input::get('email');
 
-        try
-        {
+        try {
             // Find the user using the user email address
             $user = Sentry::findUserByLogin($email);
 
@@ -316,8 +287,7 @@ class UsersController extends \BaseController {
             $data = array('url' => $url);
 
             // Now you can send this code to your user via email for example.
-            Mail::send('emails.reset-code', $data, function($message)
-            {
+            Mail::send('emails.reset-code', $data, function ($message) {
                 $message->from('us@example.com', 'Laravel');
 
                 $message->to('foo@example.com');
@@ -329,9 +299,7 @@ class UsersController extends \BaseController {
                 'title' => 'Success',
                 'message' => trans('users.reset_password'));
 
-        }
-        catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
-        {
+        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
             $response['alerts'][] = array(
                 'type' => 'danger',
                 'title' => 'Error',
@@ -340,7 +308,7 @@ class UsersController extends \BaseController {
 
         return View::make('admin.users.reset-password', $response);
 
-	}
+    }
 
     /**
      * @return mixed
@@ -356,7 +324,7 @@ class UsersController extends \BaseController {
      * @return mixed
      */
     public function postChangePassword($reset_code)
-	{
+    {
         $new_password = Input::get('password');
         $new_password_repeat = Input::get('confirm_password');
         $msg = 'Please enter a new password';
@@ -365,44 +333,35 @@ class UsersController extends \BaseController {
             'title' => 'Info',
             'message' => 'Please enter a new password');
 
-        if($new_password === $new_password_repeat)
-        {
-            try
-            {
+        if ($new_password === $new_password_repeat) {
+            try {
                 // Find the user using the user id
                 $user = $user = Sentry::findUserByResetPasswordCode($reset_code);
 
                 // Attempt to reset the user password
-                if ($user->attemptResetPassword($reset_code, $new_password))
-                {
+                if ($user->attemptResetPassword($reset_code, $new_password)) {
                     return Redirect::action('UsersController@getLogin');
-                }
-                else
-                {
+                } else {
                     $response['alerts'][] = array(
                         'type' => 'error',
                         'title' => 'Error',
-                        'message' =>  tans('users.password_change_error'));
+                        'message' => tans('users.password_change_error'));
                 }
 
-            }
-            catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
-            {
+            } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
                 $response['alerts'][] = array(
                     'type' => 'danger',
                     'title' => 'Error',
                     'message' => trans('users.reset_code_not_found'));
             }
-        }
-        else
-        {
+        } else {
             $response['alerts'][] = array(
                 'type' => 'danger',
                 'title' => 'Error',
                 'message' => trans('users.passwords_do_not_match'));
         }
         return View::make('admin.users.change-password', $response);
-	}
+    }
 
     /**
      * @return mixed
@@ -437,8 +396,7 @@ class UsersController extends \BaseController {
             )
         );
 
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             $user = Sentry::findUserById(Input::get('id'));
             $user->first_name = Input::get('first_name');
             $user->last_name = Input::get('last_name');
@@ -449,8 +407,8 @@ class UsersController extends \BaseController {
             $user->addGroup(Sentry::findGroupByName(Input::get('name')));
 
             return Response::make('', 200);
-        }else{
-            return Response::make($validator->messages()-first(), 404);
+        } else {
+            return Response::make($validator->messages() - first(), 404);
         }
     }
 
@@ -470,21 +428,20 @@ class UsersController extends \BaseController {
                 'name' => 'required',
             )
         );
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             $main_table = array('first_name', 'last_name');
             $name = $input['name'];
             $value = $input['value'];
 
-            if(in_array($name, $main_table))
-            {
-                $user->update(array($name => $value));
-            }else{
-                UserInfo::findById($user->id)->update(array($name => $value));
+            if (in_array($name, $main_table)) {
+                $user->update(array($name => e($value)));
+            } else {
+                UserInfo::findById($user->id)
+                    ->update(array($name => e($value)));
             }
 
             return Response::make('ok', 200);
-        }else{
+        } else {
             return Response::make('failed', 404);
         }
     }
@@ -514,8 +471,7 @@ class UsersController extends \BaseController {
      */
     public function postFollow()
     {
-        if(Input::has('id'))
-        {
+        if (Input::has('id')) {
             $following_id = Input::get('id');
             $follower_id = Sentry::getUser()->id;
 
@@ -532,8 +488,7 @@ class UsersController extends \BaseController {
      */
     public function postUnfollow()
     {
-        if(Input::has('id'))
-        {
+        if (Input::has('id')) {
             $following_id = Input::get('id');
             $follower_id = Sentry::getUser()->id;
 
@@ -561,8 +516,7 @@ class UsersController extends \BaseController {
             ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
                 'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->paginate(30);
 
-        if(count($users) === 0)
-        {
+        if (count($users) === 0) {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
@@ -594,8 +548,7 @@ class UsersController extends \BaseController {
             ->select('users.id', 'users.first_name', 'users.last_name', 'users.email', 'users.activated_at', 'users.last_login',
                 'users_info.age', 'users_info.skype', 'users_info.website', 'users_info.picture')->paginate(30);
 
-        if(count($users) === 0)
-        {
+        if (count($users) === 0) {
             $response['alerts'][] = array(
                 'type' => 'info',
                 'title' => 'Info',
@@ -614,13 +567,12 @@ class UsersController extends \BaseController {
     protected function canFollow($following_id)
     {
         $follower_id = Sentry::getUser()->id;
-        if($following_id == $follower_id){
+        if ($following_id == $follower_id) {
             return null;
         }
-        if(UserFollow::findByIds($following_id, $follower_id)->exists())
-        {
+        if (UserFollow::findByIds($following_id, $follower_id)->exists()) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }

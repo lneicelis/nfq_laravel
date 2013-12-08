@@ -39,7 +39,7 @@ return array(
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'Europe/Vilnius',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -186,8 +186,8 @@ return array(
         'Sentry'          => 'Cartalyst\Sentry\Facades\Laravel\Sentry',
 
         'Breadcrumbs'     => 'Luknei\Breadcrumbs\Facades\Breadcrumbs',
-        'Gallery'         => 'Luknei\Gallery\Facades\Gallery'
-
+        'Gallery'         => 'Luknei\Gallery\Facades\Gallery',
+        'Debugbar' => 'Barryvdh\Debugbar\Facade'
 	),
 
 );

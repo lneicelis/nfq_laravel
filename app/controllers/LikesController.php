@@ -1,6 +1,7 @@
 <?php
 
-class LikesController extends \BaseController{
+class LikesController extends \BaseController
+{
 
     public function postGetLikes()
     {
@@ -11,8 +12,7 @@ class LikesController extends \BaseController{
                 'obj_id' => 'required',
             )
         );
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
 
             $likes = Like::where('type', '=', Input::get('type'))
                 ->where('obj_id', '=', Input::get('obj_id'));
@@ -23,7 +23,7 @@ class LikesController extends \BaseController{
             /**
              * select count(*) as aggregate from `likes` where `type` = 'album' and `obj_id` = ? and `user_id` = ?
              */
-            $response['user_likes'] = $likes->where('user_id', '=', 1)->count();
+            $response['user_likes'] = $likes->where('user_id', '=', Sentry::getUser()->id)->count();
 
             return Response::json($response, 200);
         }
@@ -38,15 +38,12 @@ class LikesController extends \BaseController{
                 'obj_id' => 'required',
             )
         );
-        if(!$validator->fails())
-        {
-            if(Input::get('type') == 'photo')
-            {
+        if (!$validator->fails()) {
+            if (Input::get('type') == 'photo') {
                 $this->likePhoto();
             }
 
-            if(Input::get('type') == 'album')
-            {
+            if (Input::get('type') == 'album') {
                 $this->likeAlbum();
             }
         }
@@ -61,8 +58,7 @@ class LikesController extends \BaseController{
             ->where('obj_id', '=', Input::get('obj_id'))
             ->where('user_id', '=', $user->id);
 
-        if($like->count() === 0)
-        {
+        if (count($like->get()) === 0) {
             /**
              * update `albums` set `no_likes` = `no_likes` + 1, `updated_at` = ? where `id` = ?
              */
@@ -75,7 +71,7 @@ class LikesController extends \BaseController{
                 'obj_id' => Input::get('obj_id'),
                 'user_id' => $user->id
             ));
-        }else{
+        } else {
             /**
              * update `albums` set `no_likes` = `no_likes` - 1, `updated_at` = ? where `id` = ?
              */
@@ -95,8 +91,7 @@ class LikesController extends \BaseController{
             ->where('obj_id', '=', Input::get('obj_id'))
             ->where('user_id', '=', $user->id);
 
-        if($like->count() === 0)
-        {
+        if (count($like->get()) === 0) {
             /**
              * update `albums` set `no_likes` = `no_likes` + 1, `updated_at` = ? where `id` = ?
              */
@@ -109,7 +104,7 @@ class LikesController extends \BaseController{
                 'obj_id' => Input::get('obj_id'),
                 'user_id' => $user->id
             ));
-        }else{
+        } else {
             /**
              * update `albums` set `no_likes` = `no_likes` - 1, `updated_at` = ? where `id` = ?
              */

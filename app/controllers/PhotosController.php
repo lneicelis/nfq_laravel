@@ -1,6 +1,7 @@
 <?php
 
-class PhotosController extends \BaseController {
+class PhotosController extends \BaseController
+{
 
     /**
      * @param $album_id
@@ -15,6 +16,7 @@ class PhotosController extends \BaseController {
         $this->canAccess('admin', true, $album->user_id);
 
         $response['album_id'] = $album->id;
+        $response['max_file_size'] = Setting::findSettings('gallery', 'max_file_size');
 
         Breadcrumbs::addCrumb('Gallery', URL::action('AlbumsController@index', array('user_id' => $album->user_id)));
         Breadcrumbs::addCrumb($album->title . ' album', URL::action('AlbumsController@show', array('id' => $album_id)));
@@ -32,8 +34,7 @@ class PhotosController extends \BaseController {
         $album = Album::find($album_id);
         $this->canAccess('admin', true, $album->user_id);
 
-        if (Input::hasFile('file'))
-        {
+        if (Input::hasFile('file')) {
             $file = Input::file('file');
             $size = (integer)Setting::findSettings('gallery', 'max_file_size');
             $mimes = Setting::findSettings('gallery', 'mimes');
@@ -43,22 +44,18 @@ class PhotosController extends \BaseController {
                 array('file' => $restrictions)
             );
 
-            if ($validator->fails())
-            {
+            if ($validator->fails()) {
                 return Response::make($validator->messages()->first(), 400);
-            }
-            else
-            {
+            } else {
                 $new_file_name = str_random(16) . '.' . $file->getClientOriginalExtension();
 
                 $tmp_file = $file->getRealPath();
 
                 $create_thumb = Gallery::thumbnail($tmp_file, $new_file_name);
 
-                $create_image = Gallery::image($tmp_file, $new_file_name, 800, 800);
+                $create_image = Gallery::image($tmp_file, $new_file_name);
 
-                if($create_thumb && $create_image)
-                {
+                if ($create_thumb && $create_image) {
                     $description = substr($file->getClientOriginalName(), 0, strlen($file->getClientOriginalName()) - strlen($file->getClientOriginalExtension()) - 1);
                     Photo::create(array(
                         'album_id' => $album_id,
@@ -73,15 +70,10 @@ class PhotosController extends \BaseController {
                         'message' => 'File was successfully uploaded.');
 
                     return Response::json('success', 200);
-                }
-                else
-                {
-                    $alerts[] = array(
-                        'type' => 'danger',
-                        'title' => 'Error!',
-                        'message' => 'The file was not uploaded, please try again.');
+                } else {
+                    $alerts = 'The file was not uploaded, please try again.';
 
-                    return Response::json($alerts, 404);
+                    return Response::make($alerts, 404);
                 }
             }
         }
@@ -91,7 +83,7 @@ class PhotosController extends \BaseController {
      * @return mixed
      */
     public function edit()
-	{
+    {
         /**
          * select * from `photos` where `id` = ? limit 1
          */
@@ -107,7 +99,7 @@ class PhotosController extends \BaseController {
                 'required' => 'Enter description, please.'
             )
         );
-        if(!$validator->fails()){
+        if (!$validator->fails()) {
             /**
              * update `photos` set `description` = ?, `updated_at` = ? where `id` = ?
              */
@@ -118,7 +110,7 @@ class PhotosController extends \BaseController {
                 'type' => 'success',
                 'title' => 'Success',
                 'message' => 'Photo successfully edited.');
-        }else{
+        } else {
             $gritter[] = array(
                 'type' => 'error',
                 'title' => 'Error',
@@ -133,7 +125,7 @@ class PhotosController extends \BaseController {
      * @return mixed
      */
     public function destroy($photo_id)
-	{
+    {
         $photo = Photo::find($photo_id);
 
         //check if this user can access this function => admin or owner
@@ -174,12 +166,13 @@ class PhotosController extends \BaseController {
         return Response::json($gritter, 200);
 
 
-	}
+    }
 
     /**
      * @return mixed
      */
-    public function getPhotos(){
+    public function getPhotos()
+    {
 
         $id = Input::get('id');
         /**
@@ -215,9 +208,9 @@ class PhotosController extends \BaseController {
          */
         $affectedRows = Photo::where('id', '=', $photo->id)->update(array('album_id' => $album->id));
 
-        if($affectedRows > 0){
+        if ($affectedRows > 0) {
             return Response::json(200);
-        }else{
+        } else {
             Return response::json(404);
         }
     }
@@ -250,13 +243,11 @@ class PhotosController extends \BaseController {
                 'h' => 'required')
         );
 
-        if(!$validator->fails())
-        {
-            if(!empty($photo))
-            {
+        if (!$validator->fails()) {
+            if (!empty($photo)) {
                 $new_file_name = str_random(16) . substr($photo->file_name, 16);
 
-                if(Gallery::crop($photo->file_name, $new_file_name, $x, $y, $w, $h)){
+                if (Gallery::crop($photo->file_name, $new_file_name, $x, $y, $w, $h)) {
                     /**
                      * insert into `photos` (`album_id`, `description`, `file_name`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?)
                      */
@@ -269,14 +260,14 @@ class PhotosController extends \BaseController {
                         'type' => 'success',
                         'title' => 'Success',
                         'message' => 'Photo successfully cropped. The new image has been created.');
-                }else{
+                } else {
                     $gritter[] = array(
                         'type' => 'error',
                         'title' => 'Error',
                         'message' => 'The photo was not cropped, please try again.');
                 }
             }
-        }else{
+        } else {
             $gritter[] = array(
                 'type' => 'error',
                 'title' => 'Error',
@@ -301,10 +292,8 @@ class PhotosController extends \BaseController {
         //check if this user can access this function => admin or owner
         $this->canAccess('admin', true, $photo->album->user_id);
 
-        if(!empty($photo->id))
-        {
-            if(Gallery::rotate($photo->file_name, $photo->file_name, $rotate))
-            {
+        if (!empty($photo->id)) {
+            if (Gallery::rotate($photo->file_name, $photo->file_name, $rotate)) {
                 $gritter = array(
                     'type' => 'success',
                     'title' => 'Success',
@@ -318,8 +307,7 @@ class PhotosController extends \BaseController {
 
     public function postGetPhotoInfo()
     {
-        if(Input::has('id'))
-        {
+        if (Input::has('id')) {
             $photo = Photo::find(Input::get('id'));
             /**
              * update `photos` set `no_views` = `no_views` + 1, `updated_at` = ? where `id` = ?
@@ -354,8 +342,7 @@ class PhotosController extends \BaseController {
         //check if this user can access this function => admin or owner
         $this->canAccess('admin', true, $photo->album->user_id);
 
-        if(!empty($photo->id))
-        {
+        if (!empty($photo->id)) {
 
             $status = ($photo->status === 1) ? 0 : 1;
             /**

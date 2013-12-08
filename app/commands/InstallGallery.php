@@ -37,7 +37,7 @@ class InstallGallery extends Command {
 	 */
 	public function fire()
 	{
-        $this->call('command.name', array('argument' => 'foo', '--option' => 'bar'));
+        $this->call('migrate');
 	}
 
 	/**

@@ -1,6 +1,7 @@
 <?php
 
-class SettingsController extends \BaseController{
+class SettingsController extends \BaseController
+{
 
     public function __construct()
     {
@@ -17,12 +18,11 @@ class SettingsController extends \BaseController{
          */
         $settings = Setting::getByType('gallery')->get();
 
-        foreach($settings as $row)
-        {
+        foreach ($settings as $row) {
             $gallery_settings[$row->name] = $row->value;
         }
 
-        return View::make('admin.settings.gallery-settings',array(
+        return View::make('admin.settings.gallery-settings', array(
             'settings' => $gallery_settings
         ));
     }
@@ -41,10 +41,8 @@ class SettingsController extends \BaseController{
                 'value' => 'required',
             )
         );
-        if(!$validator->fails())
-        {
-            if(!$validator->fails())
-            {
+        if (!$validator->fails()) {
+            if (!$validator->fails()) {
                 $type = Input::get('type');
                 $name = Input::get('name');
                 /**
@@ -54,7 +52,7 @@ class SettingsController extends \BaseController{
                     ->update(array('value' => e(Input::get('value'))));
 
                 return Response::make('ok', 200);
-            }else{
+            } else {
                 return Response::make('failed', 404);
             }
         }

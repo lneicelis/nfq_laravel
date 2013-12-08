@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="infobox-data">
-                        <span class="infobox-data-number">{{ count($photos) }}</span>
+                        <span class="infobox-data-number">{{ count($photos->get()) }}</span>
                         <div class="infobox-content">Photos</div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
 
                 <div class="infobox infobox-orange2  ">
                     <div class="infobox-icon">
-                        <i class="icon-facebook"></i>
+                        <i class="icon-heart red"></i>
                     </div>
                     <div class="infobox-data">
                         <span class="infobox-data-number">{{ $likes->count() }}</span>
@@ -110,21 +110,15 @@
 
                 </div>
 
-                <div class="infobox infobox-blue2  ">
-                    <div class="infobox-progress">
-                        <div class="easy-pie-chart percentage" data-percent="42" data-size="46">
-                            <span class="percent">42</span>%
-                        </div>
+                <div class="infobox infobox-orange2  ">
+                    <div class="infobox-icon">
+                        <i class="icon-eye-open"></i>
                     </div>
-
                     <div class="infobox-data">
-                        <span class="infobox-text">traffic used</span>
-
-                        <div class="infobox-content">
-                            <span class="bigger-110">~</span>
-                            58GB remaining
-                        </div>
+                        <span class="infobox-data-number">{{ $photos->sum('no_views') }}</span>
+                        <div class="infobox-content">Photo views</div>
                     </div>
+
                 </div>
 
                 <div class="space-6"></div>

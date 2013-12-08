@@ -1,17 +1,17 @@
 <?php
-class PhotoTagsController extends \BaseController {
+class PhotoTagsController extends \BaseController
+{
 
     /**
      * @return mixed
      */
     public function postGet()
     {
-        if(Input::has('photo_id'))
-        {
+        if (Input::has('photo_id')) {
             /**
              * select `id` as `tag-id`, `title` as `tag-title`, `description` as `tag-description`, `color` as `tag-color`, `size` as `tag-size`, `url`, `x`, `y` from `photo_tags` where `photo_id` = ?
              */
-            $tags = PhotoTag::where('photo_id', '=',Input::get('photo_id'))
+            $tags = PhotoTag::where('photo_id', '=', Input::get('photo_id'))
                 ->get(array('id as tag-id', 'title as tag-title', 'description as tag-description', 'color as tag-color', 'size as tag-size', 'url', 'x', 'y'));
 
             return Response::json($tags, 200);
@@ -34,8 +34,7 @@ class PhotoTagsController extends \BaseController {
             )
         );
 
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             /**
              * insert into `photo_tags` (`photo_id`, `title`, `description`, `url`, `color`, `size`, `x`, `y`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
              */
@@ -57,10 +56,10 @@ class PhotoTagsController extends \BaseController {
             $tag['tag-id'] = $photo_tag->id;
 
             return Response::json(Input::get(), 200);
-        }else{
+        } else {
 
             $error = $validator->messages()->first();
-            return Response::json($error,404);
+            return Response::json($error, 404);
         }
     }
 
@@ -81,8 +80,7 @@ class PhotoTagsController extends \BaseController {
             )
         );
 
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             /**
              * update `photo_tags` set `description` = ?, `url` = ?, `x` = ?, `y` = ?, `updated_at` = ? where `id` = ?
              */
@@ -97,10 +95,10 @@ class PhotoTagsController extends \BaseController {
             $photo_tag->save();
 
             return Response::json($tag, 200);
-        }else{
+        } else {
 
             $error = $validator->messages()->first();
-            return Response::json($error,404);
+            return Response::json($error, 404);
         }
     }
 
@@ -122,9 +120,9 @@ class PhotoTagsController extends \BaseController {
          */
         $tag->photo->decrement('no_tags');
 
-        if($affected_rows){
+        if ($affected_rows) {
             return Response::json("Tag was successfully deleted.", 200);
-        }else{
+        } else {
             return Response::json("Tag was not deleted.", 404);
         }
 

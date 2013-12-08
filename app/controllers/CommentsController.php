@@ -16,8 +16,7 @@ class CommentsController extends \BaseController
                 'comment' => 'required'
             )
         );
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             /**
              * insert into `comments` (`type`, `obj_id`, `user_id`, `comment`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?, ?)
              */
@@ -27,11 +26,11 @@ class CommentsController extends \BaseController
                 'user_id' => Sentry::getUser()->id,
                 'comment' => e(Input::get('comment')),
             ));
-            if(Input::get('type') == 'photo'){
+            if (Input::get('type') == 'photo') {
                 $photo = Photo::find(Input::get('obj_id'));
                 $photo->increment('no_comments');
             }
-        }else{
+        } else {
             return Response::make('Not all necessary field are filled');
         }
     }
@@ -48,8 +47,7 @@ class CommentsController extends \BaseController
                 'obj_id' => 'required'
             )
         );
-        if(!$validator->fails())
-        {
+        if (!$validator->fails()) {
             /**
              * select `users`.`first_name`, `users`.`last_name`, `users`.`id`, `users_info`.`picture`, `comments`.`comment`, `comments`.`created_at` from `comments` inner join `users` on `users`.`id` = `comments`.`user_id` inner join `users_info` on `users_info`.`id` = `comments`.`user_id` where `type` = ? and `obj_id` = ? order by `comments`.`created_at` desc
              */
@@ -63,7 +61,7 @@ class CommentsController extends \BaseController
                 ->get();
 
             return Response::json($comments, 200);
-        }else{
+        } else {
             return Response::json('', 404);
         }
     }
