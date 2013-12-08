@@ -44,6 +44,7 @@
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\swutG1euR8jEEga0.jpg" afterPath="" />
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\tUf6OFmVoMNyePwo.jpg" afterPath="" />
       <change type="DELETED" beforePath="C:\wamp\www\laravel\public\public_gallery\thumbs\xzNs6ejzVS806YMn.jpg" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="laravel.iws" />
@@ -106,7 +107,7 @@
       <file leaf-file-name="readme.md" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/readme.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="14" selection-start="854" selection-end="854" vertical-scroll-proportion="0.7139423" vertical-offset="570" max-vertical-offset="1071">
+            <state line="12" column="8" selection-start="195" selection-end="195" vertical-scroll-proportion="0.33173078" vertical-offset="66" max-vertical-offset="1071">
               <folding />
             </state>
           </provider>
@@ -308,11 +309,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="1" />
-    <editor active="false" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3284091" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4227273" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4227273" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33068183" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -446,7 +447,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/readme.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="14" selection-start="854" selection-end="854" vertical-scroll-proportion="0.7139423" vertical-offset="570" max-vertical-offset="1071">
+        <state line="12" column="8" selection-start="195" selection-end="195" vertical-scroll-proportion="0.33173078" vertical-offset="66" max-vertical-offset="1071">
           <folding />
         </state>
       </provider>
